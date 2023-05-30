@@ -4,13 +4,9 @@ const cors = require("cors");
 const dotenv = require("dotenv").config;
 const videoschema = require("./model/SaveSchema.js");
 const socketIO = require("socket.io");
-const { emitProgress, emitFinish } = require("./routes/socket.js");
 const yt = require("yt-converter");
 
 const app = express();
-
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
 
 const myRouter = require("./routes/routes.js");
 
@@ -30,4 +26,4 @@ mongoose
   })
   .then(() => console.log("DB Connect"));
 
-http.listen(PORT, () => console.log(`Server Running in ${PORT}`));
+app.listen(PORT, () => console.log(`Server Running in ${PORT}`));

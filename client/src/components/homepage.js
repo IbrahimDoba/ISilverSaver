@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import FileDownload from "js-file-download";
+import { AiOutlineDown } from "react-icons/ai";
+
+
 
 const Homepage = () => {
   const [videoUrl, setVideoUrl] = useState("");
@@ -8,11 +11,41 @@ const Homepage = () => {
   const [videoTitle, setVideoTitle] = useState("");
   const [videoToMp3, setVideoToMp3] = useState(false);
   const [isloading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [showDrop, setShowDrop] = useState(false);
+  const [matchedData, setMatchedData] = useState([]);
+  const [qualityL, setQualityL] = useState()
 
   // remove string after underscore
   const removeString = () => {
     const modifiedUrl = videoUrl.split("_channel")[0];
     setVideoUrl(modifiedUrl);
+  };
+  // create modal for notifications
+  const AlertModal = ({ message, onClose }) => {
+    return (
+      <div className="fixed inset-0 flex  items-center justify-center border bg-gray-300/75">
+        <div className=" flex h-[200px] w-[400px] flex-col justify-between rounded-lg bg-white p-6 shadow-2xl">
+          <p className="text-center text-2xl">{message}</p>
+
+          <button
+            className="focus:shadow-outline rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700 focus:outline-none"
+            onClick={onClose}
+          >
+            close
+          </button>
+        </div>
+      </div>
+    );
+  };
+  const closeModal = () => {
+    setShowModal(false);
+    setModalMessage("");
+  };
+  // handle dropdown item click
+  const handleDropClick = () => {
+    setShowDrop(!showDrop);
   };
 
   // submit function and get info of url
@@ -22,18 +55,18 @@ const Homepage = () => {
     console.log(isloading);
 
     removeString();
-
-    await axios.post("http://localhost:4000/geturldetail", {
-      url: videoUrl,
-    });
     if (videoUrl === "") {
-      alert("Video Url is empty!");
+      setModalMessage("Video Url is empty!");
+      setShowModal(true);
       setIsLoading(false);
       return;
     }
+    await axios.post("http://localhost:4000/geturldetail", {
+      url: videoUrl,
+    });
+
     await fetchVideoInfo();
     setIsLoading(false);
-    // setVideoUrl("");
   };
   // get video info
   const fetchVideoInfo = async () => {
@@ -42,9 +75,33 @@ const Homepage = () => {
       setVideoInfo([res.data]);
       console.log("videoinfo", videoInfo);
       setVideoTitle(res.data.title);
-      // setVideoInfo([])
+
+      const QLtoMatch = ["2160p60", "1440p60", "1080p60", "720p", "480p", "360p", "240p"];
+
+      const allMatchedData = res.data.formatsVideo.filter((data) =>
+        QLtoMatch.includes(data.qualityLabel)
+      );
+      console.log("QL", allMatchedData);
+
+      setMatchedData(allMatchedData);
     } catch (err) {
       console.log("err", err);
+    }
+  };
+  const handleDropItemClick = (qualityLabel) => {
+    const GetItag = matchedData
+      .filter((data) => data.qualityLabel === qualityLabel)
+      .map((data) => data.itag);
+
+     DownloadToMp4(GetItag, qualityLabel);
+    console.log(`Clicked ${qualityLabel}`, GetItag);
+
+    if (GetItag.length > 0) {
+      console.log("exists");
+    
+    } else {
+      console.log("does not exist");
+    
     }
   };
   // clear search input and saved input
@@ -64,12 +121,14 @@ const Homepage = () => {
   const convertToMp3 = async (e) => {
     e.preventDefault();
     if (!videoUrl || videoUrl.trim() === "") {
-      alert("video URL is empty!");
+      setShowModal(true);
+      setModalMessage("video URL is empty!");
       return;
     }
     console.log(videoToMp3);
     setVideoToMp3(true);
-    alert("Download Getting Ready Please wait.....");
+    setShowModal(true);
+    setModalMessage("Download Getting Ready Please wait.....");
 
     axios
       .post(
@@ -87,19 +146,66 @@ const Homepage = () => {
         console.log(res);
         FileDownload(res.data, `${videoTitle}.mp3`);
         setVideoToMp3(false);
+        
+        setShowModal(true);
+        setModalMessage("Download successful");
+        if (showModal === true) {
+          setShowModal(false);
+        }
       })
       .catch((err) => {
         console.error("Error occurred during POST", err);
+        setShowModal(true);
+        setModalMessage("An error occured while converting this video!!");
+        setVideoToMp3(false);
       });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // await fetchVideoInfo();
-      // await getMp3Data();
-    };
-    fetchData();
-  }, []);
+  const DownloadToMp4 = async (itag, qualityLabel) => {
+    // e.preventDefault();
+    if (!videoUrl || videoUrl.trim() === "") {
+      setShowModal(true);
+      setModalMessage("video URL is empty!");
+      return;
+    }
+    console.log(videoToMp3);
+    setVideoToMp3(true);
+    setShowModal(true);
+    setModalMessage("Download Getting Ready Please wait.....");
+
+    axios
+      .post(
+        "http://localhost:4000/DownloadToMp4",
+        {
+          url: videoUrl,
+          title: videoTitle,
+          itag: itag,
+          qualityLabel: qualityLabel
+        },
+        {
+          responseType: "blob",
+        }
+      )
+        
+      .then((res) => {
+        console.log(res);
+        const combinedname = videoTitle + qualityLabel
+        FileDownload(res.data, `${combinedname} .mp4`);
+        setVideoToMp3(true);
+        
+        setShowModal(true);
+        setModalMessage("Download successful");
+
+      })
+      .catch((err) => {
+        console.error("Error occurred during POST", err);
+        setShowModal(true);
+        setModalMessage("An error occured while converting this video!!");
+        setVideoToMp3(false);
+      });
+  };
+
+  
 
   console.log(videoTitle);
   return (
@@ -109,6 +215,9 @@ const Homepage = () => {
         onSubmit={handleSubmit}
         className=" mx-auto mb-6 mt-6 sm:min-w-full lg:min-w-[600px]"
       >
+        {showModal && (
+          <AlertModal message={modalMessage} onClose={closeModal} />
+        )}
         <div className="flex items-center  border-b-2 border-teal-500 py-2">
           <input
             type="text"
@@ -185,11 +294,130 @@ const Homepage = () => {
             videoToMp3 ? "cursor-not-allowed opacity-50" : "hover:bg-teal-700"
           }`}
         >
-          convert To Mp3
+          Download Audio
         </button>
-        {/* <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-            MP4 DOWNLOAD
-        </button> */}
+        <div>
+          <button
+            onClick={handleDropClick}
+          
+            className="focus:shadow-outline flex items-center rounded bg-teal-500 px-4 py-2 font-bold  text-white
+            hover:bg-teal-700"
+          >
+            Download Video
+            <AiOutlineDown className="ml-4" />
+          </button>
+
+          {showDrop && (
+            <div className="absolute mt-2 grid grid-cols-2  ">
+              <button
+                className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
+                  matchedData.filter((data) => data.qualityLabel === "240p")
+                    .length === 0
+                    ? "cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    : ""
+                }`}
+                onClick={() => handleDropItemClick("240p", )}
+                disabled={
+                  matchedData.filter((data) => data.qualityLabel === "240p")
+                    .length === 0
+                }
+              >
+                240p
+              </button>
+              <button
+                className={`mt-3 ml-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
+                  matchedData.filter((data) => data.qualityLabel === "360p")
+                    .length === 0
+                    ? "ml-3 cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    : ""
+                }`}
+                onClick={() => handleDropItemClick("360p")}
+                disabled={
+                  matchedData.filter((data) => data.qualityLabel === "360p")
+                    .length === 0
+                }
+              >
+                360p
+              </button>
+              <button
+                className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
+                  matchedData.filter((data) => data.qualityLabel === "480p")
+                    .length === 0
+                    ? "cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    : ""
+                }`}
+                onClick={() => handleDropItemClick("480p")}
+                disabled={
+                  matchedData.filter((data) => data.qualityLabel === "480p")
+                    .length === 0
+                }
+              >
+                480p
+              </button>
+              <button
+                className={`mt-3 ml-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
+                  matchedData.filter((data) => data.qualityLabel === "720p")
+                    .length === 0
+                    ? " ml-3 cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    : ""
+                }`}
+                onClick={() => handleDropItemClick("720p")}
+                disabled={
+                  matchedData.filter((data) => data.qualityLabel === "720p")
+                    .length === 0
+                }
+              >
+                720p
+              </button>
+              <button
+                className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
+                  matchedData.filter((data) => data.qualityLabel === "1080p60")
+                    .length === 0
+                    ? "cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    : ""
+                }`}
+                onClick={() => handleDropItemClick("1080p60")}
+                disabled={
+                  matchedData.filter((data) => data.qualityLabel === "1080p60")
+                    .length === 0
+                }
+              >
+                1080p60
+              </button>
+
+              <button
+                className={`mt-3 ml-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
+                  matchedData.filter((data) => data.qualityLabel === "1440p60")
+                    .length === 0
+                    ? "cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    : ""
+                }`}
+                onClick={() => handleDropItemClick("1440p60")}
+                disabled={
+                  matchedData.filter((data) => data.qualityLabel === "1440p60")
+                    .length === 0
+                }
+              >
+                1440p60
+              </button>
+              <button
+                className={`mt-3  block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
+                  matchedData.filter((data) => data.qualityLabel === "2160p60")
+                    .length === 0
+                    ? " cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    : ""
+                }`}
+                onClick={() => handleDropItemClick("2160p60")}
+                disabled={
+                  matchedData.filter((data) => data.qualityLabel === "2160p60")
+                    .length === 0
+                }
+              >
+                2160p60
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

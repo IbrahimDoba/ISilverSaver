@@ -6,15 +6,18 @@ const SaveSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    name: {
-      type: String,
-      required: true,
+    itag: {
+      type: Number,
     },
-    createdAt: {
-      type: Date,
-      default: new Date(),
+    qualityLabel : {
+      type: String
+    },
+    title: {
+      type: String,
+      required: true
     },
   },
+  {timestamps: true}
 );
 
 module.exports = mongoose.model("videodatas", SaveSchema);

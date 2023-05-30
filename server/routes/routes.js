@@ -1,97 +1,16 @@
 const router = require("express").Router();
+const apiController = require("./apiControllers.js");
 
-const bodyParser = require("body-parser");
-const videoSchema = require("../model/SaveSchema");
-const yt = require("yt-converter");
-const express = require("express");
-const app = express();
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
-const path = require('path')
 
-router.use(bodyParser.json());
-
-let videoInfo = null;
-let mp3data = null;
-let onData;
-let onClose;
-let percentage;
-let close;
 // get video details from url
-router.post("/geturldetail", async (req, res) => {
-  const url = req.body.url;
-  try {
-    await yt.getInfo(url).then((info) => {
-      videoInfo = info;
-      res.status(200).json({ message: "video datas" });
-    });
-  } catch (err) {
-    res.json(err);
-    console.log(err);
-  }
-});
+router.post("/geturldetail", apiController.Post_getDetail);
 // send get req with video details
-router.get("/geturldetail", async (req, res) => {
-  try {
-    if (videoInfo) {
-      res.send(videoInfo);
-    } else {
-      res.status(400).json({ error: "not avaiable" });
-    }
-  } catch (error) {
-    console.log(error);
-  }
-});
+router.get("/geturldetail", apiController.Get_getDetail);
 // clear and reset video details
-router.get("/clearUrl", async (req, res) => {
-  const url = req.query.url;
-  try {
-    await yt.getInfo(url).then((info) => {
-      videoInfo = info;
-    });
-  } catch (err) {
-    res.json(err);
-  }
-});
-// download and send mp3 video 
-router.post("/convertToMp3", async (req, res) => {
-  const url = req.body.url;
-  const title = req.body.title;
-
-  onData = (p) => {
-    percentage = p;
-    console.log(p);
-  };
-
-  onClose = (c) => {
-    close = c;
-    if (close) {
-     res.download(`./downloads/${title}.mp3`);
-      // console.log(title)
-    }
-    console.log("Finish");
-  };
-  const downloadFolder = path.resolve(__dirname, '../downloads')
-
-  await yt
-    .convertAudio(
-      {
-        url: url,
-        itag: 140,
-        directoryDownload: downloadFolder,
-        title: title,
-      },
-      onData,
-      onClose
-    )
-    .then((Vdata) => {
-      mp3data = Vdata;
-     
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
-
+router.get("/clearUrl", apiController.post_clearUrl);
+// download and save mp3 audio
+router.post("/convertToMp3", apiController.post_SaveAsAudio);
+// download and save mp4 video
+router.post("/DownloadToMp4", apiController.post_SaveAsVideo);
 
 module.exports = router;
