@@ -5,7 +5,8 @@ const dotenv = require("dotenv").config;
 const videoschema = require("./model/SaveSchema.js");
 const socketIO = require("socket.io");
 const yt = require("yt-converter");
-
+const { deleteVideosInFolder } = require('./mp4downloads/deletefilesmp4.js')
+const { deleteAudiosInFolderMp3 } = require('./mp3downloads/deletefilesmp3.js')
 const app = express();
 
 const myRouter = require("./routes/routes.js");
@@ -14,6 +15,12 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/", myRouter);
+// call delete videos funtion
+folderPath = './mp4downloads'
+deleteVideosInFolder(folderPath)
+
+folderPathMp3 = './mp3downloads'
+deleteAudiosInFolderMp3(folderPathMp3)
 
 PORT = process.env.PORT || 4000;
 URI =

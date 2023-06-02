@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import axios from "axios";
 import FileDownload from "js-file-download";
 import { AiOutlineDown } from "react-icons/ai";
-
-
 
 const Homepage = () => {
   const [videoUrl, setVideoUrl] = useState("");
@@ -15,7 +13,6 @@ const Homepage = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [showDrop, setShowDrop] = useState(false);
   const [matchedData, setMatchedData] = useState([]);
-  const [qualityL, setQualityL] = useState()
 
   // remove string after underscore
   const removeString = () => {
@@ -25,8 +22,8 @@ const Homepage = () => {
   // create modal for notifications
   const AlertModal = ({ message, onClose }) => {
     return (
-      <div className="fixed inset-0 flex  items-center justify-center border bg-gray-300/75">
-        <div className=" flex h-[200px] w-[400px] flex-col justify-between rounded-lg bg-white p-6 shadow-2xl">
+      <div className="fixed inset-0 flex  items-center justify-center border bg-gray-300/75 ">
+        <div className=" flex h-[200px] w-[400px] flex-col justify-between rounded-lg bg-white p-6 shadow-2xl max-md:w-[350px]">
           <p className="text-center text-2xl">{message}</p>
 
           <button
@@ -76,7 +73,15 @@ const Homepage = () => {
       console.log("videoinfo", videoInfo);
       setVideoTitle(res.data.title);
 
-      const QLtoMatch = ["2160p60", "1440p60", "1080p60", "720p", "480p", "360p", "240p"];
+      const QLtoMatch = [
+        "2160p60",
+        "1440p60",
+        "1080p60",
+        "720p",
+        "480p",
+        "360p",
+        "240p",
+      ];
 
       const allMatchedData = res.data.formatsVideo.filter((data) =>
         QLtoMatch.includes(data.qualityLabel)
@@ -93,15 +98,13 @@ const Homepage = () => {
       .filter((data) => data.qualityLabel === qualityLabel)
       .map((data) => data.itag);
 
-     DownloadToMp4(GetItag, qualityLabel);
+    DownloadToMp4(GetItag, qualityLabel);
     console.log(`Clicked ${qualityLabel}`, GetItag);
 
     if (GetItag.length > 0) {
       console.log("exists");
-    
     } else {
       console.log("does not exist");
-    
     }
   };
   // clear search input and saved input
@@ -146,7 +149,7 @@ const Homepage = () => {
         console.log(res);
         FileDownload(res.data, `${videoTitle}.mp3`);
         setVideoToMp3(false);
-        
+
         setShowModal(true);
         setModalMessage("Download successful");
         if (showModal === true) {
@@ -180,22 +183,21 @@ const Homepage = () => {
           url: videoUrl,
           title: videoTitle,
           itag: itag,
-          qualityLabel: qualityLabel
+          qualityLabel: qualityLabel,
         },
         {
           responseType: "blob",
         }
       )
-        
+
       .then((res) => {
         console.log(res);
-        const combinedname = videoTitle + qualityLabel
+        const combinedname = videoTitle + qualityLabel;
         FileDownload(res.data, `${combinedname} .mp4`);
         setVideoToMp3(true);
-        
+
         setShowModal(true);
         setModalMessage("Download successful");
-
       })
       .catch((err) => {
         console.error("Error occurred during POST", err);
@@ -205,12 +207,9 @@ const Homepage = () => {
       });
   };
 
-  
-
   console.log(videoTitle);
   return (
     <div className="flex flex-col items-center">
-      <div className="h-[80px] w-full bg-black"></div>
       <form
         onSubmit={handleSubmit}
         className=" mx-auto mb-6 mt-6 sm:min-w-full lg:min-w-[600px]"
@@ -269,46 +268,44 @@ const Homepage = () => {
             videoInfo.map((video, index) => (
               <div
                 key={index}
-                className="flex min-h-[500px] min-w-[800px] flex-col items-center justify-center border bg-white"
+                className="flex min-h-[500px] min-w-[800px] flex-col items-center justify-center border bg-white max-lg:min-w-[650px] max-md:min-h-[250px] max-md:min-w-[350px]"
               >
                 <img
                   className="w-[80%] object-contain  "
-                  src={video.thumbnails[3].url}
+                  src={video.thumbnails[4].url || video.thumbnails[3].url}
                   alt="thumbnail"
                 />
                 <h2 className="mt-4 text-2xl font-semibold">{video.title}</h2>
               </div>
             ))
           ) : (
-            <div className="flex min-h-[500px] min-w-[800px] items-center justify-center border bg-white">
+            <div className="  flex min-h-[250px] min-w-[800px] items-center justify-center border bg-white max-lg:min-w-[650px] max-md:min-h-[150px] max-md:min-w-[350px]">
               <span>No image available</span>
             </div>
           )}
         </>
       )}
-      <div className=" mt-6 flex w-[450px] justify-between border">
+      <div className=" mt-6 flex w-[450px] justify-between  max-md:w-full max-md:justify-around">
         <button
-          disabled={videoToMp3}
+          // disabled={videoToMp3}
           onClick={convertToMp3}
-          className={`focus:shadow-outline rounded bg-teal-500 px-4 py-2 font-bold text-white ${
-            videoToMp3 ? "cursor-not-allowed opacity-50" : "hover:bg-teal-700"
-          }`}
+          className=" focus:shadow-outline rounded bg-teal-500 px-4 py-2 font-bold text-white max-md:w-[120px]
+            "
         >
           Download Audio
         </button>
         <div>
           <button
             onClick={handleDropClick}
-          
             className="focus:shadow-outline flex items-center rounded bg-teal-500 px-4 py-2 font-bold  text-white
-            hover:bg-teal-700"
+            hover:bg-teal-700 "
           >
             Download Video
             <AiOutlineDown className="ml-4" />
           </button>
 
           {showDrop && (
-            <div className="absolute mt-2 grid grid-cols-2  ">
+            <div className="relative mt-2 grid grid-cols-2  ">
               <button
                 className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "240p")
@@ -316,16 +313,16 @@ const Homepage = () => {
                     ? "cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
                     : ""
                 }`}
-                onClick={() => handleDropItemClick("240p", )}
+                onClick={() => handleDropItemClick("240p")}
                 disabled={
                   matchedData.filter((data) => data.qualityLabel === "240p")
-                    .length === 0
+                    .length === 0 || showModal
                 }
               >
                 240p
               </button>
               <button
-                className={`mt-3 ml-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
+                className={`ml-3 mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "360p")
                     .length === 0
                     ? "ml-3 cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
@@ -334,7 +331,7 @@ const Homepage = () => {
                 onClick={() => handleDropItemClick("360p")}
                 disabled={
                   matchedData.filter((data) => data.qualityLabel === "360p")
-                    .length === 0
+                    .length === 0 || showModal
                 }
               >
                 360p
@@ -349,13 +346,13 @@ const Homepage = () => {
                 onClick={() => handleDropItemClick("480p")}
                 disabled={
                   matchedData.filter((data) => data.qualityLabel === "480p")
-                    .length === 0
+                    .length === 0 || showModal
                 }
               >
                 480p
               </button>
               <button
-                className={`mt-3 ml-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
+                className={`ml-3 mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "720p")
                     .length === 0
                     ? " ml-3 cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
@@ -364,7 +361,7 @@ const Homepage = () => {
                 onClick={() => handleDropItemClick("720p")}
                 disabled={
                   matchedData.filter((data) => data.qualityLabel === "720p")
-                    .length === 0
+                    .length === 0 || showModal
                 }
               >
                 720p
@@ -379,14 +376,14 @@ const Homepage = () => {
                 onClick={() => handleDropItemClick("1080p60")}
                 disabled={
                   matchedData.filter((data) => data.qualityLabel === "1080p60")
-                    .length === 0
+                    .length === 0 || showModal
                 }
               >
                 1080p60
               </button>
 
               <button
-                className={`mt-3 ml-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
+                className={`ml-3 mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "1440p60")
                     .length === 0
                     ? "cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
@@ -395,7 +392,7 @@ const Homepage = () => {
                 onClick={() => handleDropItemClick("1440p60")}
                 disabled={
                   matchedData.filter((data) => data.qualityLabel === "1440p60")
-                    .length === 0
+                    .length === 0 || showModal
                 }
               >
                 1440p60
@@ -410,7 +407,7 @@ const Homepage = () => {
                 onClick={() => handleDropItemClick("2160p60")}
                 disabled={
                   matchedData.filter((data) => data.qualityLabel === "2160p60")
-                    .length === 0
+                    .length === 0 || showModal
                 }
               >
                 2160p60
