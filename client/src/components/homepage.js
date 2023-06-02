@@ -187,9 +187,6 @@ const Homepage = () => {
         },
         {
           responseType: "blob",
-          headers: {
-            "Access-Control-Allow-Origin": "https://ssaver.netlify.app"
-          }
         }
       )
 
