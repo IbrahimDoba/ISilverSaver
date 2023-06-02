@@ -12,8 +12,11 @@ const app = express();
 const myRouter = require("./routes/routes.js");
 
 app.use(express.json());
-app.use(cors({ origin: "https://ssaver.netlify.app" }));
-
+// Enable CORS with specific origin and methods
+app.use(cors({
+  origin: 'https://ssaver.netlify.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 app.use("/", myRouter);
 // call delete videos funtion
 folderPath = './mp4downloads'
