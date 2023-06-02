@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import FileDownload from "js-file-download";
 import { AiOutlineDown } from "react-icons/ai";
@@ -67,7 +67,9 @@ const Homepage = () => {
   };
   // get video info
   const fetchVideoInfo = async () => {
-    const res = await axios.get("https://youtube-saver.onrender.com/geturldetail");
+    const res = await axios.get(
+      "https://youtube-saver.onrender.com/geturldetail"
+    );
     try {
       setVideoInfo([res.data]);
       console.log("videoinfo", videoInfo);
@@ -184,6 +186,13 @@ const Homepage = () => {
           title: videoTitle,
           itag: itag,
           qualityLabel: qualityLabel,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Origin": "https://ssaver.netlify.app",
+          },
         },
         {
           responseType: "blob",
@@ -305,7 +314,7 @@ const Homepage = () => {
           </button>
 
           {showDrop && (
-            <div className="relative mt-2 grid grid-cols-2  ">
+            <div className="absolute mt-2 grid grid-cols-2  ">
               <button
                 className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "240p")
