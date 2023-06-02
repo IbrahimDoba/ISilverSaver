@@ -12,7 +12,7 @@ const app = express();
 const myRouter = require("./routes/routes.js");
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "https://ssaver.netlify.app" }));
 
 app.use("/", myRouter);
 // call delete videos funtion

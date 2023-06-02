@@ -58,7 +58,7 @@ const Homepage = () => {
       setIsLoading(false);
       return;
     }
-    await axios.post("http://localhost:4000/geturldetail", {
+    await axios.post("https://youtube-saver.onrender.com/geturldetail", {
       url: videoUrl,
     });
 
@@ -67,7 +67,7 @@ const Homepage = () => {
   };
   // get video info
   const fetchVideoInfo = async () => {
-    const res = await axios.get("http://localhost:4000/geturldetail");
+    const res = await axios.get("https://youtube-saver.onrender.com/geturldetail");
     try {
       setVideoInfo([res.data]);
       console.log("videoinfo", videoInfo);
@@ -110,7 +110,7 @@ const Homepage = () => {
   // clear search input and saved input
   const clearSearch = async (e) => {
     e.preventDefault();
-    const res = await axios.get("http://localhost:4000/clearUrl", {
+    const res = await axios.get("https://youtube-saver.onrender.com/clearUrl", {
       params: {
         url: "",
       },
@@ -135,7 +135,7 @@ const Homepage = () => {
 
     axios
       .post(
-        "http://localhost:4000/convertToMp3",
+        "https://youtube-saver.onrender.com/convertToMp3",
         {
           url: videoUrl,
           title: videoTitle,
@@ -178,7 +178,7 @@ const Homepage = () => {
 
     axios
       .post(
-        "http://localhost:4000/DownloadToMp4",
+        "https://youtube-saver.onrender.com/DownloadToMp4",
         {
           url: videoUrl,
           title: videoTitle,

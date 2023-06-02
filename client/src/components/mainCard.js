@@ -3,7 +3,7 @@ import ytimg from "./assets/ytimg.jpg";
 
 const MainCard = () => {
   return (
-    <div className="flex w-full flex-col items-center justify-center">
+    <div className="flex w-full flex-col items-center justify-center  mt-[200px] ">
       <section className="m-7  flex min-h-[500px] max-w-[80%] items-center justify-center rounded-lg  max-med:flex-col ">
         <article className="flex h-[500px] w-1/2 items-center md:w-1/2 max-med:h-auto max-med:w-auto">
           <img
