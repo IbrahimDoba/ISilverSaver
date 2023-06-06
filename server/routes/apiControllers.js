@@ -7,7 +7,6 @@ const yt = require("yt-converter");
 const express = require("express");
 const app = express();
 const http = require("http").createServer(app);
-const io = require("socket.io")(http);
 const path = require("path");
 
 router.use(bodyParser.json());
@@ -84,7 +83,7 @@ const post_SaveAsAudio = async (req, res) => {
         itag: 140,
         title: newname,
       });
-      await newVideoData.save()
+      await newVideoData.save();
     }
     console.log("Finish");
   };
@@ -103,7 +102,6 @@ const post_SaveAsAudio = async (req, res) => {
     )
     .then((Vdata) => {
       mp3data = Vdata;
-     
     })
     .catch((err) => {
       console.log(err);
@@ -147,7 +145,7 @@ const post_SaveAsVideo = async (req, res) => {
     const MainTag = itag[0];
 
     try {
-      const Vdata = await yt.convertVideo(
+      yt.convertVideo(
         {
           url: url,
           itag: MainTag,
@@ -158,7 +156,7 @@ const post_SaveAsVideo = async (req, res) => {
         onClose
       );
 
-      mp3data = Vdata;
+      
       console.log(MainTag);
     } catch (err) {
       console.log(err);
@@ -171,13 +169,12 @@ const post_SaveAsVideo = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
- // itag 243, 396, 134
+// itag 243, 396, 134
 
 module.exports = {
   Post_getDetail,
   Get_getDetail,
   post_clearUrl,
   post_SaveAsAudio,
-
   post_SaveAsVideo,
 };

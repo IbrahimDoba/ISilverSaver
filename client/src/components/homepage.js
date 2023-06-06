@@ -188,13 +188,6 @@ const Homepage = () => {
           qualityLabel: qualityLabel,
         },
         {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            "Access-Control-Allow-Origin": "https://ssaver.netlify.app",
-          },
-        },
-        {
           responseType: "blob",
         }
       )
