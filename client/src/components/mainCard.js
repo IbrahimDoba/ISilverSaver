@@ -1,4 +1,5 @@
-import React from 'react'
+import React from "react";
+import ytimg from "./assets/ytimg.jpg";
 
 const MainCard = () => {
   return (
@@ -21,7 +22,7 @@ const MainCard = () => {
               you to download Youtube Vidoes, and convert videos to Mp3.
               With SSaver, you can download different types of content from
               Youtube and enjoy them later, even when you're offline. So next
-              time you see something on Youtube that you want to keep, 
+              time you see something on Youtube that you want to keep, use
               SSaver Downloader and save it for later!
             </p>
          
@@ -143,7 +144,7 @@ const MainCard = () => {
         </section>
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default MainCard
+export default MainCard;

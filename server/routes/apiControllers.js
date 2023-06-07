@@ -7,7 +7,6 @@ const yt = require("yt-converter");
 const express = require("express");
 const app = express();
 const http = require("http").createServer(app);
-const io = require("socket.io")(http);
 const path = require("path");
 
 router.use(bodyParser.json());
@@ -84,7 +83,7 @@ const post_SaveAsAudio = async (req, res) => {
         itag: 140,
         title: newname,
       });
-      await newVideoData.save()
+      await newVideoData.save();
     }
     console.log("Finish");
   };
@@ -103,7 +102,6 @@ const post_SaveAsAudio = async (req, res) => {
     )
     .then((Vdata) => {
       mp3data = Vdata;
-     
     })
     .catch((err) => {
       console.log(err);
@@ -113,59 +111,65 @@ const post_SaveAsAudio = async (req, res) => {
 // download and save as Mp$
 
 const post_SaveAsVideo = async (req, res) => {
-  const url = req.body.url;
-  const title = req.body.title;
-  const itag = req.body.itag;
-  const qualityLabel = req.body.qualityLabel;
+  try {
+    const url = req.body.url;
+    const title = req.body.title;
+    const itag = req.body.itag;
+    const qualityLabel = req.body.qualityLabel;
 
-  const newname = title.replace(/[\/\\:*?"'|]/g, "-");
-  const combinedname = newname + qualityLabel;
+    const newname = title.replace(/[\/\\:*?"'|]/g, "-");
+    const combinedname = newname + qualityLabel;
 
-  onData = (p) => {
-    percentage = p;
-    console.log(p);
-  };
+    onData = (p) => {
+      percentage = p;
+      console.log(p);
+    };
 
-  onClose = async (c) => {
-    close = c;
-    if (close) {
-      res.download(`./Mp4downloads/${combinedname}.mp4`);
-      console.log(combinedname);
-      console.log(title);
+    onClose = async (c) => {
+      close = c;
+      if (close) {
+        res.download(`./Mp4downloads/${combinedname}.mp4`);
+        console.log(combinedname);
+        console.log(title);
 
-      const newVideoData = new videoSchema({
-        url: url,
-        itag: MainTag,
-        title: combinedname,
-      });
-      await newVideoData.save()
-    }
-    console.log("Finish");
-  };
-  const downloadFolder = path.resolve(__dirname, "../mp4downloads");
-  const MainTag = itag[0];
+        const newVideoData = new videoSchema({
+          url: url,
+          itag: MainTag,
+          title: combinedname,
+        });
+        await newVideoData.save();
+      }
+      console.log("Finish");
+    };
+    const downloadFolder = path.resolve(__dirname, "../Mp4downloads");
+    const MainTag = itag[0];
 
-  await yt
-    .convertVideo(
-      {
-        url: url,
-        itag: MainTag,
-        directoryDownload: downloadFolder,
-        title: combinedname,
-      },
-      onData,
-      onClose
-    )
-    .then((Vdata) => {
-      mp3data = Vdata;
+    try {
+      yt.convertVideo(
+        {
+          url: url,
+          itag: MainTag,
+          directoryDownload: downloadFolder,
+          title: combinedname,
+        },
+        onData,
+        onClose
+      );
+
+      
       console.log(MainTag);
-      console.log(url);
-      console.log(combinedname);
-    })
-    .catch((err) => {
+    } catch (err) {
       console.log(err);
-    });
-}; // itag 243, 396, 134
+      // Handle the error here or throw it to be caught by a higher-level error handler
+      throw err;
+    }
+  } catch (err) {
+    console.log(err);
+    // Handle the error here or send an appropriate response to the client
+    res.status(500).send("Internal Server Error");
+  }
+};
+// itag 243, 396, 134
 
 module.exports = {
   Post_getDetail,

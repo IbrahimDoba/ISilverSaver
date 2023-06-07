@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import FileDownload from "js-file-download";
 import { AiOutlineDown } from "react-icons/ai";
@@ -13,7 +13,6 @@ const Homepage = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [showDrop, setShowDrop] = useState(false);
   const [matchedData, setMatchedData] = useState([]);
-  const [qualityL, setQualityL] = useState();
 
   // remove string after underscore
   const removeString = () => {
@@ -59,7 +58,7 @@ const Homepage = () => {
       setIsLoading(false);
       return;
     }
-    await axios.post("http://localhost:4000/geturldetail", {
+    await axios.post("https://youtube-saver.onrender.com/geturldetail", {
       url: videoUrl,
     });
 
@@ -68,7 +67,9 @@ const Homepage = () => {
   };
   // get video info
   const fetchVideoInfo = async () => {
-    const res = await axios.get("http://localhost:4000/geturldetail");
+    const res = await axios.get(
+      "https://youtube-saver.onrender.com/geturldetail"
+    );
     try {
       setVideoInfo([res.data]);
       console.log("videoinfo", videoInfo);
@@ -111,7 +112,7 @@ const Homepage = () => {
   // clear search input and saved input
   const clearSearch = async (e) => {
     e.preventDefault();
-    const res = await axios.get("http://localhost:4000/clearUrl", {
+    const res = await axios.get("https://youtube-saver.onrender.com/clearUrl", {
       params: {
         url: "",
       },
@@ -136,7 +137,7 @@ const Homepage = () => {
 
     axios
       .post(
-        "http://localhost:4000/convertToMp3",
+        "https://youtube-saver.onrender.com/convertToMp3",
         {
           url: videoUrl,
           title: videoTitle,
@@ -179,7 +180,7 @@ const Homepage = () => {
 
     axios
       .post(
-        "http://localhost:4000/DownloadToMp4",
+        "https://youtube-saver.onrender.com/downloadToMp4",
         {
           url: videoUrl,
           title: videoTitle,
@@ -306,7 +307,7 @@ const Homepage = () => {
           </button>
 
           {showDrop && (
-            <div className="relative mt-2 grid grid-cols-2  ">
+            <div className="absolute mt-2 grid grid-cols-2  ">
               <button
                 className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "240p")
