@@ -22,7 +22,7 @@ const MainCard = () => {
               you to download Youtube Vidoes, and convert videos to Mp3.
               With SSaver, you can download different types of content from
               Youtube and enjoy them later, even when you're offline. So next
-              time you see something on Youtube that you want to keep, use
+              time you see something on Youtube that you want to keep, 
               SSaver Downloader and save it for later!
             </p>
          
