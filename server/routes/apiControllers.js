@@ -141,7 +141,7 @@ const post_SaveAsVideo = async (req, res) => {
       }
       console.log("Finish");
     };
-    const downloadFolder = path.resolve(__dirname, "../Mp4downloads");
+    const downloadFolder = path.resolve(__dirname, "../mp4downloads");
     const MainTag = itag[0];
 
     try {
@@ -158,6 +158,8 @@ const post_SaveAsVideo = async (req, res) => {
 
       
       console.log(MainTag);
+      console.log(url);
+      console.log(combinedname);
     } catch (err) {
       console.log(err);
       // Handle the error here or throw it to be caught by a higher-level error handler
