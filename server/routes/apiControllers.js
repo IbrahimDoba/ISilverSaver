@@ -128,7 +128,7 @@ const post_SaveAsVideo = async (req, res) => {
     onClose = async (c) => {
       close = c;
       if (close) {
-        res.download(`./Mp4downloads/${combinedname}.mp4`);
+        res.download(`./mp4downloads/${combinedname}.mp4`);
         console.log(combinedname);
         console.log(title);
 
