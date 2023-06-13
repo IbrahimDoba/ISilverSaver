@@ -10,7 +10,12 @@ router.get("/geturldetail", apiController.Get_getDetail);
 router.get("/clearUrl", apiController.post_clearUrl);
 // download and save mp3 audio
 router.post("/convertToMp3", apiController.post_SaveAsAudio);
-// download and save mp4 video
+// download to mp3
+router.get("/downloadToMp3", apiController.get_DownloadMp3)
+// download and save 
 router.post("/downloadToMp4", apiController.post_SaveAsVideo);
+// download to mp4
+router.get("/downloadToVideo", apiController.get_DownloadToMp4)
+
 
 module.exports = router;

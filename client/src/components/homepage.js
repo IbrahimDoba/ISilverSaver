@@ -49,11 +49,10 @@ const Homepage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log(isloading);
 
     removeString();
     if (videoUrl === "") {
-      setModalMessage("Video Url is empty!");
+      setModalMessage("YouTube Link Is Missing!");
       setShowModal(true);
       setIsLoading(false);
       return;
@@ -67,9 +66,7 @@ const Homepage = () => {
   };
   // get video info
   const fetchVideoInfo = async () => {
-    const res = await axios.get(
-      "https://youtube-saver.onrender.com/geturldetail"
-    );
+    const res = await axios.get("https://youtube-saver.onrender.com/geturldetail");
     try {
       setVideoInfo([res.data]);
       console.log("videoinfo", videoInfo);
@@ -100,14 +97,10 @@ const Homepage = () => {
       .filter((data) => data.qualityLabel === qualityLabel)
       .map((data) => data.itag);
 
-    DownloadToMp4(GetItag, qualityLabel);
+    convertToMp4(GetItag, qualityLabel);
     console.log(`Clicked ${qualityLabel}`, GetItag);
 
-    if (GetItag.length > 0) {
-      console.log("exists");
-    } else {
-      console.log("does not exist");
-    }
+    
   };
   // clear search input and saved input
   const clearSearch = async (e) => {
@@ -122,41 +115,130 @@ const Homepage = () => {
     setVideoUrl("");
   };
 
-  // donwload video to mp3 funtions
+  // donwload  audio funtions
   const convertToMp3 = async (e) => {
     e.preventDefault();
     if (!videoUrl || videoUrl.trim() === "") {
       setShowModal(true);
-      setModalMessage("video URL is empty!");
+      setModalMessage("YouTube Link Is Missing!");
       return;
     }
     console.log(videoToMp3);
     setVideoToMp3(true);
     setShowModal(true);
-    setModalMessage("Download Getting Ready Please wait.....");
+    setModalMessage("Download Getting Ready Please Wait.....");
 
-    axios
-      .post(
-        "https://youtube-saver.onrender.com/convertToMp3",
-        {
-          url: videoUrl,
-          title: videoTitle,
-        },
-        {
-          responseType: "blob",
+    fetch("https://youtube-saver.onrender.com/convertToMp3", {
+      method: "POST",
+      body: JSON.stringify({ url: videoUrl, title: videoTitle }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        const reader = response.body.getReader();
+        let received = "";
+
+        function read() {
+          reader.read().then(({ done, value }) => {
+            if (done) {
+              // Perform any necessary tasks after the conversion is complete
+              setVideoToMp3(false);
+              setShowModal(true);
+              setModalMessage("Download Complete: " + received + "%");
+              DownloadToMp3();
+              return;
+            }
+
+            // Process the received data
+            const chunk = new TextDecoder("utf-8").decode(value);
+
+            received = Math.round(parseFloat(chunk));
+            console.log("Received:", received);
+            setModalMessage("Download Percentage: " + received + "%");
+
+            // Continue reading the stream
+            read();
+          });
         }
-      )
 
+        read();
+      })
+      .catch((err) => {
+        console.error("Error occurred during POST", err);
+        setShowModal(true);
+        setModalMessage("An error occurred while converting this video!!");
+        setVideoToMp3(false);
+      });
+  };
+
+  const DownloadToMp3 = () => {
+    axios
+      .get("https://youtube-saver.onrender.com/downloadToMp3", { responseType: "blob" })
       .then((res) => {
-        console.log(res);
         FileDownload(res.data, `${videoTitle}.mp3`);
         setVideoToMp3(false);
 
         setShowModal(true);
-        setModalMessage("Download successful");
+        setModalMessage("Download Successful");
         if (showModal === true) {
           setShowModal(false);
         }
+      });
+  };
+
+  const convertToMp4 = async (itag, qualityLabel) => {
+    // e.preventDefault();
+    if (!videoUrl || videoUrl.trim() === "") {
+      setShowModal(true);
+      setModalMessage("YouTube Link Is Missing!");
+      return;
+    }
+    setVideoToMp3(true);
+    setShowModal(true);
+    setModalMessage("Download Getting Ready Please Wait.....");
+
+    fetch("https://youtube-saver.onrender.com/downloadToMp4", {
+      method: "POST",
+      body: JSON.stringify({
+        url: videoUrl,
+        title: videoTitle,
+        itag: itag,
+        qualityLabel: qualityLabel,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        const reader = res.body.getReader();
+        let received = "";
+
+        function read() {
+          reader.read().then(({ done, value }) => {
+            if (done) {
+              // perfrom task after conversion is completed
+              setVideoToMp3(false);
+              setShowModal(true);
+              setModalMessage("Download Complete: " + received + "%");
+              DownloadToMp4(qualityLabel);
+              return;
+            }
+            // process the recieved datas
+            const decoder = new TextDecoder("utf-8");
+            const chunk = decoder.decode(value);
+            const parsedChunk = JSON.parse(chunk);
+            const percentageValue = parsedChunk.percentage.percentage;
+            received = Math.round(parseFloat(percentageValue));
+
+            console.log("Recived: ", received);
+            setModalMessage("Download Percentage: " + received + "%");
+
+            // continue reading the stream
+            read();
+          });
+        }
+        read();
       })
       .catch((err) => {
         console.error("Error occurred during POST", err);
@@ -166,50 +248,23 @@ const Homepage = () => {
       });
   };
 
-  const DownloadToMp4 = async (itag, qualityLabel) => {
-    // e.preventDefault();
-    if (!videoUrl || videoUrl.trim() === "") {
-      setShowModal(true);
-      setModalMessage("video URL is empty!");
-      return;
-    }
-    console.log(videoToMp3);
-    setVideoToMp3(true);
-    setShowModal(true);
-    setModalMessage("Download Getting Ready Please wait.....");
-
+  const DownloadToMp4 = (qualityLabel, combinedname) =>
     axios
-      .post(
-        "https://youtube-saver.onrender.com/downloadToMp4",
-        {
-          url: videoUrl,
-          title: videoTitle,
-          itag: itag,
-          qualityLabel: qualityLabel,
+      .get("https://youtube-saver.onrender.com/downloadToVideo", {
+        responseType: "blob",
+        params: {
+          titlename: combinedname,
         },
-        {
-          responseType: "blob",
-        }
-      )
-
+      })
       .then((res) => {
-        console.log(res);
         const combinedname = videoTitle + qualityLabel;
-        FileDownload(res.data, `${combinedname} .mp4`);
+        FileDownload(res.data, `${combinedname}.mp4`);
         setVideoToMp3(true);
 
         setShowModal(true);
         setModalMessage("Download successful");
-      })
-      .catch((err) => {
-        console.error("Error occurred during POST", err);
-        setShowModal(true);
-        setModalMessage("An error occured while converting this video!!");
-        setVideoToMp3(false);
       });
-  };
 
-  console.log(videoTitle);
   return (
     <div className="flex flex-col items-center">
       <form
@@ -287,11 +342,11 @@ const Homepage = () => {
           )}
         </>
       )}
-      <div className=" mt-6 flex w-[450px] justify-between  max-md:w-full max-md:justify-around">
+      <div className="  mt-6 flex w-[450px] justify-between  max-md:w-full max-md:justify-around">
         <button
           // disabled={videoToMp3}
           onClick={convertToMp3}
-          className=" focus:shadow-outline rounded bg-teal-500 px-4 py-2 font-bold text-white max-md:w-[120px]
+          className="max-h-[40px]  focus:shadow-outline rounded bg-teal-500 px-4 py-2 font-bold text-white max-md:w-[120px]
             "
         >
           Download Audio
@@ -307,7 +362,7 @@ const Homepage = () => {
           </button>
 
           {showDrop && (
-            <div className="absolute mt-2 grid grid-cols-2  ">
+            <div className={` mt-2 grid grid-cols-2 ${showModal ? "" : ""}  `}>
               <button
                 className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "240p")
@@ -372,7 +427,7 @@ const Homepage = () => {
                 className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "1080p60")
                     .length === 0
-                    ? "cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    ? "cursor-not-allowed bg-white text-white hover:bg-white "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("1080p60")}
@@ -388,7 +443,7 @@ const Homepage = () => {
                 className={`ml-3 mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "1440p60")
                     .length === 0
-                    ? "cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    ? "cursor-not-allowed bg-white text-white hover:bg-white "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("1440p60")}
@@ -403,7 +458,7 @@ const Homepage = () => {
                 className={`mt-3  block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "2160p60")
                     .length === 0
-                    ? " cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    ? " cursor-not-allowed bg-white text-white hover:bg-white"
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("2160p60")}

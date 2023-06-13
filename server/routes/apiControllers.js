@@ -8,6 +8,7 @@ const express = require("express");
 const app = express();
 const http = require("http").createServer(app);
 const path = require("path");
+const { Readable } = require("stream");
 
 router.use(bodyParser.json());
 
@@ -70,14 +71,16 @@ const post_SaveAsAudio = async (req, res) => {
   const onData = (p) => {
     percentage = p;
     console.log(p);
+    updateStream.push(`${p}\n`);
   };
 
   onClose = async (c) => {
     close = c;
     if (close) {
-      res.download(`./mp3downloads/${newname}.mp3`);
       console.log(newname);
-
+      updateStream.push(null);
+      //  res.download(`./mp3downloads/${newname}.mp3`);
+      get_DownloadMp3();
       const newVideoData = new videoSchema({
         url: url,
         itag: 140,
@@ -87,6 +90,22 @@ const post_SaveAsAudio = async (req, res) => {
     }
     console.log("Finish");
   };
+
+  const updateStream = new Readable({
+    read() {
+      // Nothing needed here
+    },
+  });
+
+  // Set the response headers
+  res.setHeader("Content-Type", "text/plain");
+  res.setHeader("Transfer-Encoding", "chunked");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  // Pipe the update stream to the response stream
+  updateStream.pipe(res);
+
   const downloadFolder = path.resolve(__dirname, "../mp3downloads");
 
   await yt
@@ -101,11 +120,21 @@ const post_SaveAsAudio = async (req, res) => {
       onClose
     )
     .then((Vdata) => {
-      mp3data = Vdata;
+      mp3data = newname;
     })
     .catch((err) => {
       console.log(err);
     });
+};
+
+const get_DownloadMp3 = async (res, req) => {
+  try {
+    console.log(mp3data);
+    // await res.send(mp3data)
+    await res.download(`./mp3downloads/${mp3data}.mp3`);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 // download and save as Mp$
@@ -120,17 +149,22 @@ const post_SaveAsVideo = async (req, res) => {
     const newname = title.replace(/[\/\\:*?"'|]/g, "-");
     const combinedname = newname + qualityLabel;
 
-    onData = (p) => {
+    onData = async (p) => {
       percentage = p;
-      console.log(p);
+      console.log("percent value", p);
+      updateStream.push(JSON.stringify({ percentage: p }) + "\n");
     };
 
     onClose = async (c) => {
       close = c;
       if (close) {
-        res.download(`./mp4downloads/${combinedname}.mp4`);
+        updateStream.push(null);
         console.log(combinedname);
-        console.log(title);
+        get_DownloadToMp4(req, res, combinedname);
+
+        // res.download(`./mp4downloads/${combinedname}.mp4`);
+        // console.log(combinedname);
+        // console.log(title);
 
         const newVideoData = new videoSchema({
           url: url,
@@ -141,6 +175,19 @@ const post_SaveAsVideo = async (req, res) => {
       }
       console.log("Finish");
     };
+
+    const updateStream = new Readable({
+      read() {},
+    });
+    // Set the response headers
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Transfer-Encoding", "chunked");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    // pipe the update stream to the response stream
+    updateStream.pipe(res);
+
     const downloadFolder = path.resolve(__dirname, "../mp4downloads");
     const MainTag = itag[0];
 
@@ -154,12 +201,11 @@ const post_SaveAsVideo = async (req, res) => {
         },
         onData,
         onClose
-      );
+      ).then((VideoData) => {
+        newNameHere = combinedname
+        console.log("naehereis",newNameHere)
+      });
 
-      
-      console.log(MainTag);
-      console.log(url);
-      console.log(combinedname);
     } catch (err) {
       console.log(err);
       // Handle the error here or throw it to be caught by a higher-level error handler
@@ -171,6 +217,16 @@ const post_SaveAsVideo = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+const get_DownloadToMp4 = async (req, res) => {
+  try {
+    
+
+     console.log("videoname", newNameHere);
+     await res.download(`./mp4downloads/${newNameHere}.mp4`);
+  } catch (err) {
+    console.log(err);
+  }
+};
 // itag 243, 396, 134
 
 module.exports = {
@@ -178,5 +234,7 @@ module.exports = {
   Get_getDetail,
   post_clearUrl,
   post_SaveAsAudio,
+  get_DownloadMp3,
   post_SaveAsVideo,
+  get_DownloadToMp4,
 };
