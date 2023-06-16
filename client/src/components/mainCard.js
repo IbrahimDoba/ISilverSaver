@@ -1,14 +1,25 @@
 import React from "react";
 import ytimg from "./assets/ytimg.jpg";
+import main1 from "./assets/main1.png";
+import audiimg from "./assets/audiimg.png";
+import video from "./assets/video.png";
+import fast from "./assets/fast.png";
+
+// 'text': '#000000',
+// 'background': '#ffffff',
+// 'primary-button': '#93dc99',
+// 'secondary-button': '#ecf9f3',
+// 'accent': '#46c38f',
+
 
 const MainCard = () => {
   return (
-    <div className="flex w-full flex-col items-center justify-center  mt-[100px] ">
+    <div className="flex w-full flex-col items-center justify-center bg-[#ffffff]  pt-[100px] ">
       <section className="m-7  flex min-h-[500px] max-w-[80%] items-center justify-center rounded-lg  max-med:flex-col ">
         <article className="flex h-[500px] w-1/2 items-center md:w-1/2 max-med:h-auto max-med:w-auto">
           <img
             className="h-56 w-full object-cover sm:h-72 md:h-96 lg:h-full lg:w-full"
-            src={ytimg}
+            src={main1}
             alt="img here"
           />
         </article>
@@ -66,7 +77,7 @@ const MainCard = () => {
               />
             </article>
             <section className="w-[80%]  flex-1  ">
-              <h2 className="p-3 text-center text-2xl">Copy the URL</h2>
+              <h2 className="p-3 text-center text-2xl">Paste and Search</h2>
               <hr className=" mt-3 border border-red-600" />
               <p className="p-2">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut
@@ -85,7 +96,7 @@ const MainCard = () => {
               />
             </article>
             <section className="w-[80%]  flex-1  ">
-              <h2 className="p-3 text-center text-2xl">Copy the URL</h2>
+              <h2 className="p-3 text-center text-2xl">Download Audio or Video</h2>
               <hr className=" mt-3 border border-red-600" />
               <p className="p-2">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut
@@ -100,8 +111,8 @@ const MainCard = () => {
       <section className="w-[80%]">
         <header className="text-6xl text-center p-8">SSsaver Features</header>
         <section className="flex max-med:flex-col mb-4 ">
-          <articles className= " flex-1 md:w-1/2">
-            <img src={ytimg} alt="imghere" className=" max-med:h-[250px] h-[300px] w-[900px] rounded-t-lg" />
+          <articles className= " flex-1 md:w-1/2 flex items-center  justify-center">
+            <img src={audiimg} alt="imghere" className=" max-med:h-[250px] h-[300px] w-auto rounded-t-lg" />
           </articles>
           <article className="flex-1 flex flex-col ml-5 justify-center text-start">
             <h2 className="mb-6  text-4xl font-extrabold   text-gray-900 md:text-4xl lg:text-5xl max-med:mt-4 ">Audio Downloader</h2>
@@ -113,9 +124,9 @@ const MainCard = () => {
             </p>
           </article>
         </section>
-        <section className="flex max-med:flex-col flex-row-reverse mb-4 ">
-          <articles className= " flex-1 md:w-1/2">
-            <img src={ytimg} alt="imghere" className=" max-med:h-[250px] h-[300px] w-[900px] rounded-t-lg" />
+        <section className="flex max-med:flex-col flex-row-reverse mb-4 py-[100px] ">
+          <articles className= " flex-1 flex md:w-1/2 justify-center">
+            <img src={video} alt="imghere" className=" max-med:h-[250px] h-[300px] w-auto rounded-t-lg" />
           </articles>
           
           <article className="flex-1 flex flex-col ml-5 justify-center text-start">
@@ -129,8 +140,8 @@ const MainCard = () => {
           </article>
         </section>
         <section className="flex max-med:flex-col mb-4 ">
-          <articles className= " flex-1 md:w-1/2">
-            <img src={ytimg} alt="imghere" className=" max-med:h-[250px] h-[300px] w-[900px] rounded-t-lg" />
+          <articles className= " flex-1 md:w-1/2 flex justify-center">
+            <img src={fast} alt="imghere" className=" max-med:h-[250px] h-[300px] w-auto rounded-t-lg" />
           </articles>
           <article className="flex-1 flex flex-col ml-5 justify-center text-start">
             <h2 className="mb-6  text-4xl font-extrabold   text-gray-900 md:text-4xl lg:text-5xl max-med:mt-4 ">Audio Downloader</h2>

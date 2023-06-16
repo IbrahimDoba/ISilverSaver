@@ -266,7 +266,7 @@ const Homepage = () => {
       });
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col bg-[#ffffff] items-center">
       <form
         onSubmit={handleSubmit}
         className=" mx-auto mb-6 mt-6 sm:min-w-full lg:min-w-[600px]"
@@ -274,7 +274,7 @@ const Homepage = () => {
         {showModal && (
           <AlertModal message={modalMessage} onClose={closeModal} />
         )}
-        <div className="flex items-center  border-b-2 border-teal-500 py-2">
+        <div className="flex items-center  border-b-2 border-[#93dc99] py-2">
           <input
             type="text"
             value={videoUrl}
@@ -290,7 +290,7 @@ const Homepage = () => {
           </button>
           <button
             type="submit"
-            className="focus:shadow-outline ml-4 rounded bg-teal-500 px-4 py-2 font-bold text-white hover:bg-teal-700 focus:outline-none"
+            className="focus:shadow-outline ml-4 rounded bg-[#93dc99] px-4 py-2 font-bold text-white hover:bg-teal-700 focus:outline-none"
           >
             Search
           </button>
@@ -346,7 +346,7 @@ const Homepage = () => {
         <button
           // disabled={videoToMp3}
           onClick={convertToMp3}
-          className="max-h-[40px]  focus:shadow-outline rounded bg-teal-500 px-4 py-2 font-bold text-white max-md:w-[120px]
+          className="max-h-[40px]  focus:shadow-outline rounded bg-[#93dc99] px-4 py-2 font-bold text-white max-md:w-[120px]
             "
         >
           Download Audio
@@ -354,7 +354,7 @@ const Homepage = () => {
         <div>
           <button
             onClick={handleDropClick}
-            className="focus:shadow-outline flex items-center rounded bg-teal-500 px-4 py-2 font-bold  text-white
+            className="focus:shadow-outline flex items-center rounded bg-[#93dc99] px-4 py-2 font-bold  text-white
             hover:bg-teal-700 "
           >
             Download Video
