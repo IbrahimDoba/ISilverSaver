@@ -77,10 +77,10 @@ const post_SaveAsAudio = async (req, res) => {
   onClose = async (c) => {
     close = c;
     if (close) {
-      console.log(newname);
       updateStream.push(null);
       //  res.download(`./mp3downloads/${newname}.mp3`);
       get_DownloadMp3(req, res);
+
       const newVideoData = new videoSchema({
         url: url,
         itag: 140,
@@ -127,7 +127,7 @@ const post_SaveAsAudio = async (req, res) => {
     });
 };
 
-const get_DownloadMp3 = async (res, req) => {
+const get_DownloadMp3 = async (req, res) => {
   try {
     console.log(mp3data);
     // await res.send(mp3data)
@@ -159,13 +159,8 @@ const post_SaveAsVideo = async (req, res) => {
       close = c;
       if (close) {
         updateStream.push(null);
-        console.log(combinedname);
         get_DownloadToMp4(req, res, combinedname);
-
         // res.download(`./mp4downloads/${combinedname}.mp4`);
-        // console.log(combinedname);
-        // console.log(title);
-
         const newVideoData = new videoSchema({
           url: url,
           itag: MainTag,
