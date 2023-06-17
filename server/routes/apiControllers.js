@@ -80,7 +80,7 @@ const post_SaveAsAudio = async (req, res) => {
       console.log(newname);
       updateStream.push(null);
       //  res.download(`./mp3downloads/${newname}.mp3`);
-      get_DownloadMp3();
+      get_DownloadMp3(req, res);
       const newVideoData = new videoSchema({
         url: url,
         itag: 140,
