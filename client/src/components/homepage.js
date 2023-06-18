@@ -51,7 +51,7 @@ const Homepage = () => {
     setIsLoading(true);
 
     removeString();
-    if (videoUrl === "" || !videoUrl.includes("www.youtube.com")) {
+    if (videoUrl === "" || !videoUrl.includes("youtube.com")) {
       setModalMessage("YouTube Link Is Missing!");
       setShowModal(true);
       setIsLoading(false);
