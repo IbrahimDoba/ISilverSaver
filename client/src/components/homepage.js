@@ -51,7 +51,7 @@ const Homepage = () => {
     setIsLoading(true);
 
     removeString();
-    if (videoUrl === "") {
+    if (videoUrl === "" || !videoUrl.includes("www.youtube.com")) {
       setModalMessage("YouTube Link Is Missing!");
       setShowModal(true);
       setIsLoading(false);
@@ -76,6 +76,7 @@ const Homepage = () => {
         "2160p60",
         "1440p60",
         "1080p60",
+        "1080p",
         "720p",
         "480p",
         "360p",
@@ -266,10 +267,10 @@ const Homepage = () => {
       });
 
   return (
-    <div className="flex flex-col bg-[#ffffff] items-center">
+    <div className="flex flex-col bg-[#ffffff]  items-center">
       <form
         onSubmit={handleSubmit}
-        className=" mx-auto mb-6 mt-6 sm:min-w-full lg:min-w-[600px]"
+        className=" mx-auto my-6  max-md:w-[80%] lg:min-w-[600px]"
       >
         {showModal && (
           <AlertModal message={modalMessage} onClose={closeModal} />
@@ -279,18 +280,18 @@ const Homepage = () => {
             type="text"
             value={videoUrl}
             onChange={(e) => setVideoUrl(e.target.value)}
-            className="mr-3 w-full appearance-none border-none bg-transparent px-2 py-1 leading-tight text-gray-700 focus:outline-none"
+            className="mr-3 w-full  appearance-none border-none bg-transparent px-2 py-1 leading-tight text-gray-700 focus:outline-none"
             placeholder="Enter Video URL"
           />
           <button
             onClick={clearSearch}
-            className="focus:shadow-outline rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700 focus:outline-none"
+            className="focus:shadow-outline rounded max-md:text-sm max-md:px-2 bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700 focus:outline-none"
           >
             Clear
           </button>
           <button
             type="submit"
-            className="focus:shadow-outline ml-4 rounded bg-[#93dc99] px-4 py-2 font-bold text-white hover:bg-teal-700 focus:outline-none"
+            className="focus:shadow-outline ml-4 rounded max-md:text-sm max-md:px-2 bg-[#93dc99] px-4 py-2 font-bold text-TXT hover:bg-ACT focus:outline-none"
           >
             Search
           </button>
@@ -332,7 +333,7 @@ const Homepage = () => {
                   src={video.thumbnails[4].url || video.thumbnails[3].url}
                   alt="thumbnail"
                 />
-                <h2 className="mt-4 text-2xl font-semibold">{video.title}</h2>
+                <h2 className="mt-4 text-2xl font-semibold max-md:text-sm">{video.title}</h2>
               </div>
             ))
           ) : (
@@ -346,16 +347,16 @@ const Homepage = () => {
         <button
           // disabled={videoToMp3}
           onClick={convertToMp3}
-          className="max-h-[40px]  focus:shadow-outline rounded bg-[#93dc99] px-4 py-2 font-bold text-white max-md:w-[120px]
-            "
+          className="max-h-[40px] max-md:max-h-[60px] max-md:text-sm max-md:px-2 focus:shadow-outline rounded bg-[#93dc99] px-4 py-2 font-bold text-TXT max-md:w-[150px]
+          hover:bg-ACT "
         >
           Download Audio
         </button>
-        <div>
+        <div className="flex items-end flex-col ">
           <button
             onClick={handleDropClick}
-            className="focus:shadow-outline flex items-center rounded bg-[#93dc99] px-4 py-2 font-bold  text-white
-            hover:bg-teal-700 "
+            className="focus:shadow-outline max-md:text-sm flex items-center rounded bg-[#93dc99] px-4 py-2 font-bold  text-TXT
+            hover:bg-ACT "
           >
             Download Video
             <AiOutlineDown className="ml-4" />
@@ -425,14 +426,14 @@ const Homepage = () => {
               </button>
               <button
                 className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
-                  matchedData.filter((data) => data.qualityLabel === "1080p60")
+                  matchedData.filter((data) => data.qualityLabel === "1080p60" || "1080p")
                     .length === 0
                     ? "cursor-not-allowed bg-white text-white hover:bg-white "
                     : ""
                 }`}
-                onClick={() => handleDropItemClick("1080p60")}
+                onClick={() => handleDropItemClick("1080p60" || "1080p")}
                 disabled={
-                  matchedData.filter((data) => data.qualityLabel === "1080p60")
+                  matchedData.filter((data) => data.qualityLabel === "1080p60" || "1080p")
                     .length === 0 || showModal
                 }
               >
