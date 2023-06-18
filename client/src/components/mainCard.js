@@ -1,7 +1,6 @@
 import React from "react";
 import "animate.css/animate.min.css";
 import { AnimationOnScroll } from "react-animation-on-scroll";
-import ytimg from "./assets/ytimg.jpg";
 import main1 from "./assets/main1.png";
 import audiimg from "./assets/audiimg.png";
 import video from "./assets/video.png";
