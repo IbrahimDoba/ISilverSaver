@@ -9,6 +9,7 @@ const app = express();
 const http = require("http").createServer(app);
 const path = require("path");
 const { Readable } = require("stream");
+const fs = require("fs");
 
 router.use(bodyParser.json());
 
@@ -17,6 +18,9 @@ let onData;
 let onClose;
 let close;
 let newname = null;
+let updateStream;
+let isdownloading = true;
+console.log(isdownloading);
 
 // get video details from url
 const Post_getDetail = async (req, res) => {
@@ -150,6 +154,13 @@ const post_SaveAsVideo = async (req, res) => {
     const combinedname = newname + qualityLabel;
 
     onData = async (p) => {
+      if (!isdownloading) {
+        if (!updateStream.writableEnded) {
+          updateStream.push(null); // End the stream
+          return;
+        }
+      }
+
       percentage = p;
       console.log("percent value", p);
       updateStream.push(JSON.stringify({ percentage: p }) + "\n");
@@ -158,17 +169,20 @@ const post_SaveAsVideo = async (req, res) => {
     onClose = async (c) => {
       close = c;
       if (close) {
+        // get_DownloadToMp4(req, res, combinedname);
         updateStream.push(null);
-        get_DownloadToMp4(req, res, combinedname);
+
         // res.download(`./mp4downloads/${combinedname}.mp4`);
-        const newVideoData = new videoSchema({
-          url: url,
-          itag: MainTag,
-          title: combinedname,
-        });
-        await newVideoData.save();
+        // const newVideoData = new videoSchema({
+        //   url: url,
+        //   itag: MainTag,
+        //   title: combinedname,
+        // });
+        // await newVideoData.save();
       }
       console.log("Finish");
+
+      console.log(isdownloading);
     };
 
     const updateStream = new Readable({
@@ -197,10 +211,9 @@ const post_SaveAsVideo = async (req, res) => {
         onData,
         onClose
       ).then((VideoData) => {
-        newNameHere = combinedname
-        console.log("naehereis",newNameHere)
+        newNameHere = combinedname;
+        console.log("naehereis", newNameHere);
       });
-
     } catch (err) {
       console.log(err);
       // Handle the error here or throw it to be caught by a higher-level error handler
@@ -214,14 +227,33 @@ const post_SaveAsVideo = async (req, res) => {
 };
 const get_DownloadToMp4 = async (req, res) => {
   try {
-    
+    console.log("videoname", newNameHere);
 
-     console.log("videoname", newNameHere);
-     await res.download(`./mp4downloads/${newNameHere}.mp4`);
+    const filePath = `./mp4downloads/${newNameHere}.mp4`;
+
+    // set headers for file download
+    res.setHeader("Content-Type", "application/octet-stream");
+   
+    // await res.download(`./mp4downloads/${newNameHere}.mp4`);
+
+    // create a readable stream from the file
+    const fileStream = fs.createReadStream(filePath);
+
+    // pipe the stream to the res obj
+    fileStream.pipe(res);
   } catch (err) {
     console.log(err);
   }
 };
+const post_terminateStream = (req, res) => {
+  if (isdownloading) {
+    isdownloading = false;
+    console.log(isdownloading);
+  }
+
+  console.log("download stopped");
+};
+
 // itag 243, 396, 134
 
 module.exports = {
@@ -232,4 +264,5 @@ module.exports = {
   get_DownloadMp3,
   post_SaveAsVideo,
   get_DownloadToMp4,
+  post_terminateStream,
 };

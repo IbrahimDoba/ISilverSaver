@@ -16,6 +16,8 @@ router.get("/downloadToMp3", apiController.get_DownloadMp3)
 router.post("/downloadToMp4", apiController.post_SaveAsVideo);
 // download to mp4
 router.get("/downloadToVideo", apiController.get_DownloadToMp4)
+// ternminate stream
+router.post("/terminateStream", apiController.post_terminateStream )
 
 
 module.exports = router;
