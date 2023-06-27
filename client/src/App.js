@@ -1,6 +1,5 @@
 import Footer from "./components/Footer";
-import Homepage from "./components/homepage";
-import MainCard from "./components/mainCard";
+
 import Navbar from "./components/navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Mainpage from "./components/pages/Mainpage";
