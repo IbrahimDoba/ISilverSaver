@@ -13,6 +13,7 @@ const Homepage = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [showDrop, setShowDrop] = useState(false);
   const [matchedData, setMatchedData] = useState([]);
+  const [endStream, setEndSteam] = useState(false);
 
   // remove string after underscore
   const removeString = () => {
@@ -25,7 +26,14 @@ const Homepage = () => {
       <div className="fixed inset-0 flex  items-center justify-center border bg-gray-300/75 ">
         <div className=" flex h-[200px] w-[400px] flex-col justify-between rounded-lg bg-white p-6 shadow-2xl max-md:w-[350px]">
           <p className="text-center text-2xl">{message}</p>
-
+          {/* {endStream && (
+            <button
+              onClick={termiateStream}
+              className="focus:shadow-outline rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700 focus:outline-none"
+            >
+              Terminate Download
+            </button>
+          )} */}
           <button
             className="focus:shadow-outline rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700 focus:outline-none"
             onClick={onClose}
@@ -57,7 +65,7 @@ const Homepage = () => {
       setIsLoading(false);
       return;
     }
-    await axios.post("https://youtube-saver.onrender.com/geturldetail", {
+    await axios.post("http://localhost:4000/geturldetail", {
       url: videoUrl,
     });
 
@@ -66,7 +74,7 @@ const Homepage = () => {
   };
   // get video info
   const fetchVideoInfo = async () => {
-    const res = await axios.get("https://youtube-saver.onrender.com/geturldetail");
+    const res = await axios.get("http://localhost:4000/geturldetail");
     try {
       setVideoInfo([res.data]);
       console.log("videoinfo", videoInfo);
@@ -100,13 +108,11 @@ const Homepage = () => {
 
     convertToMp4(GetItag, qualityLabel);
     console.log(`Clicked ${qualityLabel}`, GetItag);
-
-    
   };
   // clear search input and saved input
   const clearSearch = async (e) => {
     e.preventDefault();
-    const res = await axios.get("https://youtube-saver.onrender.com/clearUrl", {
+    const res = await axios.get("http://localhost:4000/clearUrl", {
       params: {
         url: "",
       },
@@ -129,7 +135,7 @@ const Homepage = () => {
     setShowModal(true);
     setModalMessage("Download Getting Ready Please Wait.....");
 
-    fetch("https://youtube-saver.onrender.com/convertToMp3", {
+    fetch("http://localhost:4000/convertToMp3", {
       method: "POST",
       body: JSON.stringify({ url: videoUrl, title: videoTitle }),
       headers: {
@@ -175,7 +181,7 @@ const Homepage = () => {
 
   const DownloadToMp3 = () => {
     axios
-      .get("https://youtube-saver.onrender.com/downloadToMp3", { responseType: "blob" })
+      .get("http://localhost:4000/downloadToMp3", { responseType: "blob" })
       .then((res) => {
         FileDownload(res.data, `${videoTitle}.mp3`);
         setVideoToMp3(false);
@@ -199,7 +205,7 @@ const Homepage = () => {
     setShowModal(true);
     setModalMessage("Download Getting Ready Please Wait.....");
 
-    fetch("https://youtube-saver.onrender.com/downloadToMp4", {
+    fetch("http://localhost:4000/downloadToMp4", {
       method: "POST",
       body: JSON.stringify({
         url: videoUrl,
@@ -217,14 +223,21 @@ const Homepage = () => {
 
         function read() {
           reader.read().then(({ done, value }) => {
-            if (done) {
+            // if (done && received !== 100) {
+            //   setModalMessage("Download Canceled ");
+            //   console.log("terminated");
+            //   return;
+            // }
+            if (received === 100) {
               // perfrom task after conversion is completed
               setVideoToMp3(false);
               setShowModal(true);
               setModalMessage("Download Complete: " + received + "%");
               DownloadToMp4(qualityLabel);
+              console.log("done value", done);
               return;
             }
+
             // process the recieved datas
             const decoder = new TextDecoder("utf-8");
             const chunk = decoder.decode(value);
@@ -234,6 +247,7 @@ const Homepage = () => {
 
             console.log("Recived: ", received);
             setModalMessage("Download Percentage: " + received + "%");
+            setEndSteam(true);
 
             // continue reading the stream
             read();
@@ -251,7 +265,7 @@ const Homepage = () => {
 
   const DownloadToMp4 = (qualityLabel, combinedname) =>
     axios
-      .get("https://youtube-saver.onrender.com/downloadToVideo", {
+      .get("http://localhost:4000/downloadToVideo", {
         responseType: "blob",
         params: {
           titlename: combinedname,
@@ -259,18 +273,40 @@ const Homepage = () => {
       })
       .then((res) => {
         const combinedname = videoTitle + qualityLabel;
-        FileDownload(res.data, `${combinedname}.mp4`);
-        setVideoToMp3(true);
+        const blob = new Blob([res.data], {type: "video/mp4"})
 
+      //  create a url object from the blob
+      const url = window.URL.createObjectURL(blob)
+
+      // create a temp anchor tag to initiate the download
+      const a = document.createElement("a")
+      a.href = url
+      a.download = combinedname + ".mp4";
+      a.click()
+
+      // clean up the url obj
+      window.URL.revokeObjectURL(url)
+
+        // FileDownload(res.data, `${combinedname}.mp4`);
+        setVideoToMp3(true);
         setShowModal(true);
         setModalMessage("Download successful");
       });
 
+  const termiateStream = async () => {
+    axios.post("http://localhost:4000/terminateStream");
+    try {
+      console.log("Steam Terminated sucess");
+    } catch (err) {
+      console.log("error transimiing steam", err);
+    }
+  };
+
   return (
-    <div className="flex flex-col bg-[#ffffff]  items-center">
+    <div className="flex flex-col items-center  bg-[#ffffff]">
       <form
         onSubmit={handleSubmit}
-        className=" mx-auto my-6  max-md:w-[80%] lg:min-w-[600px]"
+        className=" mx-auto my-6  lg:min-w-[600px] max-md:w-[80%]"
       >
         {showModal && (
           <AlertModal message={modalMessage} onClose={closeModal} />
@@ -285,13 +321,13 @@ const Homepage = () => {
           />
           <button
             onClick={clearSearch}
-            className="focus:shadow-outline rounded max-md:text-sm max-md:px-2 bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700 focus:outline-none"
+            className="focus:shadow-outline rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700 focus:outline-none max-md:px-2 max-md:text-sm"
           >
             Clear
           </button>
           <button
             type="submit"
-            className="focus:shadow-outline ml-4 rounded max-md:text-sm max-md:px-2 bg-[#93dc99] px-4 py-2 font-bold text-TXT hover:bg-ACT focus:outline-none"
+            className="focus:shadow-outline ml-4 rounded bg-[#93dc99] px-4 py-2 font-bold text-TXT hover:bg-ACT focus:outline-none max-md:px-2 max-md:text-sm"
           >
             Search
           </button>
@@ -333,7 +369,9 @@ const Homepage = () => {
                   src={video.thumbnails[4].url || video.thumbnails[3].url}
                   alt="thumbnail"
                 />
-                <h2 className="mt-4 text-2xl font-semibold max-md:text-sm">{video.title}</h2>
+                <h2 className="mt-4 text-2xl font-semibold max-md:text-sm">
+                  {video.title}
+                </h2>
               </div>
             ))
           ) : (
@@ -347,16 +385,16 @@ const Homepage = () => {
         <button
           // disabled={videoToMp3}
           onClick={convertToMp3}
-          className="max-h-[40px] max-md:max-h-[60px] max-md:text-sm max-md:px-2 focus:shadow-outline rounded bg-[#93dc99] px-4 py-2 font-bold text-TXT max-md:w-[150px]
-          hover:bg-ACT "
+          className="focus:shadow-outline max-h-[40px] rounded bg-[#93dc99] px-4 py-2 font-bold text-TXT hover:bg-ACT max-md:max-h-[60px] max-md:w-[150px] max-md:px-2
+          max-md:text-sm "
         >
           Download Audio
         </button>
-        <div className="flex items-end flex-col ">
+        <div className="flex flex-col items-end ">
           <button
             onClick={handleDropClick}
-            className="focus:shadow-outline max-md:text-sm flex items-center rounded bg-[#93dc99] px-4 py-2 font-bold  text-TXT
-            hover:bg-ACT "
+            className="focus:shadow-outline flex items-center rounded bg-[#93dc99] px-4 py-2 font-bold text-TXT  hover:bg-ACT
+            max-md:text-sm "
           >
             Download Video
             <AiOutlineDown className="ml-4" />
@@ -426,15 +464,17 @@ const Homepage = () => {
               </button>
               <button
                 className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
-                  matchedData.filter((data) => data.qualityLabel === "1080p60" || "1080p")
-                    .length === 0
+                  matchedData.filter(
+                    (data) => data.qualityLabel === "1080p60" || "1080p"
+                  ).length === 0
                     ? "cursor-not-allowed bg-white text-white hover:bg-white "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("1080p60" || "1080p")}
                 disabled={
-                  matchedData.filter((data) => data.qualityLabel === "1080p60" || "1080p")
-                    .length === 0 || showModal
+                  matchedData.filter(
+                    (data) => data.qualityLabel === "1080p60" || "1080p"
+                  ).length === 0 || showModal
                 }
               >
                 1080p60

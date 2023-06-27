@@ -1,16 +1,26 @@
-import Footer from './components/Footer';
-import Homepage from './components/homepage';
-import MainCard from './components/mainCard';
-import Navbar from './components/navbar';
+import Footer from "./components/Footer";
+import Homepage from "./components/homepage";
+import MainCard from "./components/mainCard";
+import Navbar from "./components/navbar";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Mainpage from "./components/pages/Mainpage";
+import Contact from "./components/pages/Contact";
+import Privacy from "./components/pages/Privacy";
+import Terms from "./components/pages/Terms";
 
 function App() {
   return (
-    <>
-    <Navbar/>
-    <Homepage />
-    <MainCard/>
-    <Footer/>
-    </>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Mainpage />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/termsandconditions" element={<Terms />} />
+      </Routes>
+      <Footer />
+    </Router>
+   
   );
 }
 

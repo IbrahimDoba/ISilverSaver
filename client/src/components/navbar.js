@@ -12,15 +12,15 @@ const Navbar = () => {
             </a>
           </div>
           <div class="flex w-1/3 items-center justify-around">
-            <a
+            {/* <a
               href="/"
               class="mr-4 text-[#302703] hover:border-b hover:border-l-0 hover:border-r-0 hover:border-t-0 hover:border-white"
             >
               About
-            </a>
+            </a> */}
             <a
-              href="/"
-              class="text-[#302703] hover:border-b hover:border-l-0 hover:border-r-0 hover:border-t-0 hover:border-white"
+              href="/contact"
+              class="text-[#302703]  hover:text-white"
             >
               Contact
             </a>
