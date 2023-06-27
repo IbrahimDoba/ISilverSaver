@@ -52,7 +52,7 @@ const MainCard = () => {
         </p>
         <div className=" grid flex-wrap justify-center gap-4 md:grid-cols-3">
           <div className="flex w-[auto] flex-col items-center rounded-2xl bg-SC_BTN">
-            <article className="h-full w-full flex-1 bg-white border rounded-t-xl ">
+            <article className="h-full w-full flex-1 rounded-t-xl border bg-white ">
               <img
                 className="  h-[280px] w-full  rounded-t-lg object-contain"
                 src={img1}
@@ -63,15 +63,14 @@ const MainCard = () => {
               <h2 className="p-3 text-center text-2xl">Copy the URL</h2>
               <hr className=" mt-3 border border-ACT" />
               <p className="p-2">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut
-                maiores cupiditate deleniti vel libero quis corrupti nemo
-                ratione molestias minus. Tempora, voluptate necessitatibus.
-                Consequuntur, error!
+                Go to YouTube and find the video you want to download. Copy the
+                URL of the video from the address bar of your browser. The URL
+                is the web address of the video page.
               </p>
             </section>
           </div>
           <div className="flex w-[auto] flex-col items-center rounded-2xl bg-SC_BTN">
-            <article className="h-full w-full flex-1 bg-white border rounded-t-xl ">
+            <article className="h-full w-full flex-1 rounded-t-xl border bg-white ">
               <img
                 className="  h-[280px] w-full   rounded-t-lg object-contain"
                 src={img2}
@@ -82,15 +81,14 @@ const MainCard = () => {
               <h2 className="p-3 text-center text-2xl">Paste and Search</h2>
               <hr className=" mt-3 border border-red-600" />
               <p className="p-2">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut
-                maiores cupiditate deleniti vel libero quis corrupti nemo
-                ratione molestias minus. Tempora, voluptate necessitatibus.
-                Consequuntur, error!
+                Once you find the designated field, right-click inside it and
+                select "Paste" to insert the copied URL. Then, click on the
+                "Search" or "Download" button next to the field.
               </p>
             </section>
           </div>
           <div className="flex w-[auto] flex-col items-center rounded-2xl bg-SC_BTN">
-            <article className="h-full w-full flex-1 bg-white border rounded-t-xl">
+            <article className="h-full w-full flex-1 rounded-t-xl border bg-white">
               <img
                 className="  h-[280px] w-full  rounded-t-lg object-contain"
                 src={img3}
@@ -103,10 +101,11 @@ const MainCard = () => {
               </h2>
               <hr className=" mt-3 border border-ACT" />
               <p className="p-2">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut
-                maiores cupiditate deleniti vel libero quis corrupti nemo
-                ratione molestias minus. Tempora, voluptate necessitatibus.
-                Consequuntur, error!
+                After clicking the "Search" or "Download" button, the YouTube
+                downloader will process the video URL and display the available
+                download options. You will typically have the choice to download
+                the video in different formats or resolutions, or extract only
+                the audio as an MP3 file.
               </p>
             </section>
           </div>
@@ -130,16 +129,17 @@ const MainCard = () => {
               <h2 className="mb-6  text-center text-4xl font-extrabold   text-gray-900 md:text-4xl lg:text-5xl max-med:mt-4 ">
                 Audio Downloader
               </h2>
-              <p className="mb-4 mt-3  w-[80%] max-md:w-full  text-gray-700 sm:mx-auto  sm:mt-5 md:mt-5 md:text-xl ">
-                If you're looking for a way to save images from Instagram posts,
-                then iGram's Instagram photo downloader is an excellent tool to
-                consider. With iGram, you can download both individual post
-                images and multiple Instagram photos from carousels.
+              <p className="mb-4 mt-3  w-[80%] text-gray-700  sm:mx-auto sm:mt-5  md:mt-5 md:text-xl max-md:w-full ">
+                With the audio downloader feature, you can extract the audio
+                track from YouTube videos and save it as a separate audio file.
+                This allows you to enjoy your favorite music, podcasts, or any
+                other audio content offline, without the need for a video
+                component.
               </p>
             </AnimationOnScroll>
           </article>
         </section>
-        <section className="mb-4 flex flex-row-reverse py-[100px] max-md:py-[50px] max-med:flex-col ">
+        <section className="mb-4 flex flex-row-reverse py-[100px] max-med:flex-col max-md:py-[50px] ">
           <articles className=" flex flex-1 justify-center md:w-1/2">
             <AnimationOnScroll animateIn="animate__bounceIn">
               <img
@@ -155,11 +155,13 @@ const MainCard = () => {
               <h2 className="mb-6  text-center text-4xl font-extrabold  text-gray-900 md:text-4xl lg:text-5xl max-med:mt-4 ">
                 Audio Downloader
               </h2>
-              <p className="mb-4 mt-3 w-[80%] max-md:w-full pr-4 text-gray-700 sm:mx-auto sm:mt-5  md:mt-5 md:text-xl ">
-                If you're looking for a way to save images from Instagram posts,
-                then iGram's Instagram photo downloader is an excellent tool to
-                consider. With iGram, you can download both individual post
-                images and multiple Instagram photos from carousels.
+              <p className="mb-4 mt-3 w-[80%] pr-4 text-gray-700 sm:mx-auto sm:mt-5 md:mt-5  md:text-xl max-md:w-full ">
+                The video downloader feature enables you to download YouTube
+                videos in various formats and resolutions. Whether you prefer
+                high-definition videos or want to optimize the file size for
+                your device, you can choose the desired video format before
+                initiating the download process. This allows you to watch videos
+                offline without an internet connection.
               </p>
             </AnimationOnScroll>
           </article>
@@ -180,11 +182,13 @@ const MainCard = () => {
               <h2 className="mb-6  text-center text-4xl font-extrabold   text-gray-900 md:text-4xl lg:text-5xl max-med:mt-4 ">
                 Audio Downloader
               </h2>
-              <p className="mb-4 mt-3 w-[80%] max-md:w-full  text-gray-700 sm:mx-auto sm:mt-5  md:mt-5 md:text-xl ">
-                If you're looking for a way to save images from Instagram posts,
-                then iGram's Instagram photo downloader is an excellent tool to
-                consider. With iGram, you can download both individual post
-                images and multiple Instagram photos from carousels.
+              <p className="mb-4 mt-3 w-[80%] text-gray-700  sm:mx-auto sm:mt-5 md:mt-5  md:text-xl max-md:w-full ">
+                One standout feature of this YouTube downloader is its
+                server-side fast downloading capability. By leveraging
+                server-side resources, the downloader can process and retrieve
+                videos or audio files swiftly, ensuring a quick and seamless
+                download experience. This reduces the time you spend waiting for
+                the download to complete, enhancing overall efficiency.
               </p>
             </AnimationOnScroll>
           </article>
