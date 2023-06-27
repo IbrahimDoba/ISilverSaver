@@ -153,7 +153,7 @@ const MainCard = () => {
           <article className="ml-5 flex flex-1 flex-col justify-center text-start">
             <AnimationOnScroll animateIn="animate__bounceIn">
               <h2 className="mb-6  text-center text-4xl font-extrabold  text-gray-900 md:text-4xl lg:text-5xl max-med:mt-4 ">
-                Audio Downloader
+                Video Downloader
               </h2>
               <p className="mb-4 mt-3 w-[80%] pr-4 text-gray-700 sm:mx-auto sm:mt-5 md:mt-5  md:text-xl max-md:w-full ">
                 The video downloader feature enables you to download YouTube
@@ -180,7 +180,7 @@ const MainCard = () => {
           <article className="ml-5 flex flex-1 flex-col justify-center text-start">
             <AnimationOnScroll animateIn="animate__bounceIn">
               <h2 className="mb-6  text-center text-4xl font-extrabold   text-gray-900 md:text-4xl lg:text-5xl max-med:mt-4 ">
-                Audio Downloader
+                Server Side Downloader
               </h2>
               <p className="mb-4 mt-3 w-[80%] text-gray-700  sm:mx-auto sm:mt-5 md:mt-5  md:text-xl max-md:w-full ">
                 One standout feature of this YouTube downloader is its
