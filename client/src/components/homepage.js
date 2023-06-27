@@ -13,7 +13,7 @@ const Homepage = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [showDrop, setShowDrop] = useState(false);
   const [matchedData, setMatchedData] = useState([]);
-  const [endStream, setEndSteam] = useState(false);
+  // const [endStream, setEndSteam] = useState(false);
 
   // remove string after underscore
   const removeString = () => {
@@ -247,7 +247,7 @@ const Homepage = () => {
 
             console.log("Recived: ", received);
             setModalMessage("Download Percentage: " + received + "%");
-            setEndSteam(true);
+            // setEndSteam(true);
 
             // continue reading the stream
             read();
@@ -293,14 +293,14 @@ const Homepage = () => {
         setModalMessage("Download successful");
       });
 
-  const termiateStream = async () => {
-    axios.post("http://localhost:4000/terminateStream");
-    try {
-      console.log("Steam Terminated sucess");
-    } catch (err) {
-      console.log("error transimiing steam", err);
-    }
-  };
+  // const termiateStream = async () => {
+  //   axios.post("http://localhost:4000/terminateStream");
+  //   try {
+  //     console.log("Steam Terminated sucess");
+  //   } catch (err) {
+  //     console.log("error transimiing steam", err);
+  //   }
+  // };
 
   return (
     <div className="flex flex-col items-center  bg-[#ffffff]">
