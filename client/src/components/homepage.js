@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import FileDownload from "js-file-download";
 import { AiOutlineDown } from "react-icons/ai";
+import search from './assets/search.png'
 
 const Homepage = () => {
   const [videoUrl, setVideoUrl] = useState("");
@@ -59,18 +60,26 @@ const Homepage = () => {
     setIsLoading(true);
 
     removeString();
-    if (videoUrl === "" || !videoUrl.includes("you")) {
-      setModalMessage("YouTube Link Is Missing!");
-      setShowModal(true);
-      setIsLoading(false);
-      return;
-    }
-    await axios.post("http://localhost:4000/geturldetail", {
-      url: videoUrl,
-    });
+    try {
+      if (videoUrl === "") {
+        setModalMessage("YouTube Link Is Missing!");
+        setShowModal(true);
+        setIsLoading(false);
+        return;
+      }
+      await axios.post("http://localhost:4000/geturldetail", {
+        url: videoUrl,
+      });
 
-    await fetchVideoInfo();
-    setIsLoading(false);
+      await fetchVideoInfo();
+      setIsLoading(false);
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setModalMessage("Invalid link");
+        setShowModal(true);
+        setIsLoading(false);
+      }
+    }
   };
   // get video info
   const fetchVideoInfo = async () => {
@@ -95,10 +104,10 @@ const Homepage = () => {
         QLtoMatch.includes(data.qualityLabel)
       );
       console.log("QL", allMatchedData);
-
       setMatchedData(allMatchedData);
-    } catch (err) {
-      console.log("err", err);
+    } catch (error) {
+      
+      console.log("err", error);
     }
   };
   const handleDropItemClick = (qualityLabel) => {
@@ -120,6 +129,7 @@ const Homepage = () => {
     console.log("cleardata", res.data);
     setVideoInfo([]);
     setVideoUrl("");
+    setIsLoading(false);
   };
 
   // donwload  audio funtions
@@ -273,19 +283,19 @@ const Homepage = () => {
       })
       .then((res) => {
         const combinedname = videoTitle + qualityLabel;
-        const blob = new Blob([res.data], {type: "video/mp4"})
+        const blob = new Blob([res.data], { type: "video/mp4" });
 
-      //  create a url object from the blob
-      const url = window.URL.createObjectURL(blob)
+        //  create a url object from the blob
+        const url = window.URL.createObjectURL(blob);
 
-      // create a temp anchor tag to initiate the download
-      const a = document.createElement("a")
-      a.href = url
-      a.download = combinedname + ".mp4";
-      a.click()
+        // create a temp anchor tag to initiate the download
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = combinedname + ".mp4";
+        a.click();
 
-      // clean up the url obj
-      window.URL.revokeObjectURL(url)
+        // clean up the url obj
+        window.URL.revokeObjectURL(url);
 
         // FileDownload(res.data, `${combinedname}.mp4`);
         setVideoToMp3(true);
@@ -376,7 +386,7 @@ const Homepage = () => {
             ))
           ) : (
             <div className="  flex min-h-[250px] min-w-[800px] items-center justify-center border bg-white max-lg:min-w-[650px] max-md:min-h-[150px] max-md:min-w-[350px]">
-              <span>No image available</span>
+              <span className="text-xl font-semibold">No image available</span>
             </div>
           )}
         </>
@@ -406,7 +416,7 @@ const Homepage = () => {
                 className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "240p")
                     .length === 0
-                    ? "cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    ? "hidden "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("240p")}
@@ -421,7 +431,7 @@ const Homepage = () => {
                 className={`ml-3 mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "360p")
                     .length === 0
-                    ? "ml-3 cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    ? "hidden "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("360p")}
@@ -436,7 +446,7 @@ const Homepage = () => {
                 className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "480p")
                     .length === 0
-                    ? "cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    ? "hidden "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("480p")}
@@ -451,7 +461,7 @@ const Homepage = () => {
                 className={`ml-3 mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "720p")
                     .length === 0
-                    ? " ml-3 cursor-not-allowed bg-gray-100 text-gray-500 hover:bg-gray-100 "
+                    ? " hidden "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("720p")}
@@ -467,7 +477,7 @@ const Homepage = () => {
                   matchedData.filter(
                     (data) => data.qualityLabel === "1080p60" || "1080p"
                   ).length === 0
-                    ? "cursor-not-allowed bg-white text-white hover:bg-white "
+                    ? "hidden "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("1080p60" || "1080p")}
@@ -484,7 +494,7 @@ const Homepage = () => {
                 className={`ml-3 mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "1440p60")
                     .length === 0
-                    ? "cursor-not-allowed bg-white text-white hover:bg-white "
+                    ? "hidden "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("1440p60")}
@@ -499,7 +509,7 @@ const Homepage = () => {
                 className={`mt-3  block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
                   matchedData.filter((data) => data.qualityLabel === "2160p60")
                     .length === 0
-                    ? " cursor-not-allowed bg-white text-white hover:bg-white"
+                    ? " hidden"
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("2160p60")}

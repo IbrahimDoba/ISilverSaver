@@ -25,6 +25,7 @@ console.log(isdownloading);
 // get video details from url
 const Post_getDetail = async (req, res) => {
   const url = req.body.url;
+  
   try {
     await yt.getInfo(url).then((info) => {
       videoInfo = info;
@@ -35,7 +36,7 @@ const Post_getDetail = async (req, res) => {
       console.log(newname);
     });
   } catch (err) {
-    res.json(err);
+    res.status(400).json({ error: "not avaiable" });
     console.log(err);
   }
 };

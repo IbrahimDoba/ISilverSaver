@@ -8,7 +8,7 @@ const Navbar = () => {
           <div className="flex items-center">
             {/* <img src="ssaver-logo.png" alt="SSsaver Logo" className="h-8 w-8 mr-2" /> */}
             <a href="/" className="text-4xl max-md:text-2xl font-extrabold text-[#302703]">
-              SSsaver
+              SSaver
             </a>
           </div>
           <div class="flex w-1/3 items-center justify-around">
