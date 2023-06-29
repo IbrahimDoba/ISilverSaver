@@ -66,7 +66,7 @@ const Homepage = () => {
         setIsLoading(false);
         return;
       }
-      await axios.post("http://localhost:4000/geturldetail", {
+      await axios.post("https://youtube-saver.onrender.com/geturldetail", {
         url: videoUrl,
       });
 
@@ -82,7 +82,7 @@ const Homepage = () => {
   };
   // get video info
   const fetchVideoInfo = async () => {
-    const res = await axios.get("http://localhost:4000/geturldetail");
+    const res = await axios.get("https://youtube-saver.onrender.com/geturldetail");
     try {
       setVideoInfo([res.data]);
       console.log("videoinfo", videoInfo);
@@ -120,7 +120,7 @@ const Homepage = () => {
   // clear search input and saved input
   const clearSearch = async (e) => {
     e.preventDefault();
-    const res = await axios.get("http://localhost:4000/clearUrl", {
+    const res = await axios.get("https://youtube-saver.onrender.com/clearUrl", {
       params: {
         url: "",
       },
@@ -144,7 +144,7 @@ const Homepage = () => {
     setShowModal(true);
     setModalMessage("Download Getting Ready Please Wait.....");
 
-    fetch("http://localhost:4000/convertToMp3", {
+    fetch("https://youtube-saver.onrender.com/convertToMp3", {
       method: "POST",
       body: JSON.stringify({ url: videoUrl, title: videoTitle }),
       headers: {
@@ -190,7 +190,7 @@ const Homepage = () => {
 
   const DownloadToMp3 = () => {
     axios
-      .get("http://localhost:4000/downloadToMp3", { responseType: "blob" })
+      .get("https://youtube-saver.onrender.com/downloadToMp3", { responseType: "blob" })
       .then((res) => {
         FileDownload(res.data, `${videoTitle}.mp3`);
         setVideoToMp3(false);
@@ -214,7 +214,7 @@ const Homepage = () => {
     setShowModal(true);
     setModalMessage("Download Getting Ready Please Wait.....");
 
-    fetch("http://localhost:4000/downloadToMp4", {
+    fetch("https://youtube-saver.onrender.com/downloadToMp4", {
       method: "POST",
       body: JSON.stringify({
         url: videoUrl,
@@ -274,7 +274,7 @@ const Homepage = () => {
 
   const DownloadToMp4 = (qualityLabel, combinedname) =>
     axios
-      .get("http://localhost:4000/downloadToVideo", {
+      .get("https://youtube-saver.onrender.com/downloadToVideo", {
         responseType: "blob",
         params: {
           titlename: combinedname,
@@ -326,7 +326,7 @@ const Homepage = () => {
             value={videoUrl}
             onChange={(e) => setVideoUrl(e.target.value)}
             className="mr-3 w-full  appearance-none border-none bg-transparent px-2 py-1 leading-tight text-gray-700 focus:outline-none"
-            placeholder="Enter Video URL"
+            placeholder="Enter Youtube URL"
           />
           <button
             onClick={clearSearch}
