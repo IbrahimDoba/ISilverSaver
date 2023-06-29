@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import FileDownload from "js-file-download";
 import { AiOutlineDown } from "react-icons/ai";
-import search from './assets/search.png'
 
 const Homepage = () => {
   const [videoUrl, setVideoUrl] = useState("");
