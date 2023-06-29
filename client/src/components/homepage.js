@@ -237,7 +237,7 @@ const Homepage = () => {
             //   console.log("terminated");
             //   return;
             // }
-            if (received === 100) {
+            if (done) {
               // perfrom task after conversion is completed
               setVideoToMp3(false);
               setShowModal(true);
