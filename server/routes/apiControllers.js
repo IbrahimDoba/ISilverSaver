@@ -25,7 +25,7 @@ console.log(isdownloading);
 // get video details from url
 const Post_getDetail = async (req, res) => {
   const url = req.body.url;
-  
+
   try {
     await yt.getInfo(url).then((info) => {
       videoInfo = info;
@@ -84,7 +84,7 @@ const post_SaveAsAudio = async (req, res) => {
     if (close) {
       updateStream.push(null);
       //  res.download(`./mp3downloads/${newname}.mp3`);
-      get_DownloadMp3(req, res);
+      // get_DownloadMp3(req, res);
 
       const newVideoData = new videoSchema({
         url: url,
@@ -155,15 +155,16 @@ const post_SaveAsVideo = async (req, res) => {
     const combinedname = newname + qualityLabel;
 
     onData = async (p) => {
-      if (!isdownloading) {
-        if (!updateStream.writableEnded) {
-          updateStream.push(null); // End the stream
-          return;
-        }
-      }
+      // if (!isdownloading) {
+      //   if (!updateStream.writableEnded) {
+      //     updateStream.push(null); // End the stream
+      //     return;
+      //   }
+      // }
 
-      percentage = p;
-      console.log("percent value", p);
+      percentage = p.percentage;
+      
+      console.log("percent value", percentage);
       updateStream.push(JSON.stringify({ percentage: p }) + "\n");
     };
 
@@ -213,7 +214,9 @@ const post_SaveAsVideo = async (req, res) => {
         onClose
       ).then((VideoData) => {
         newNameHere = combinedname;
+        console.log(MainTag);
         console.log("naehereis", newNameHere);
+        console.log(MainTag)
       });
     } catch (err) {
       console.log(err);
@@ -230,30 +233,30 @@ const get_DownloadToMp4 = async (req, res) => {
   try {
     console.log("videoname", newNameHere);
 
-    const filePath = `./mp4downloads/${newNameHere}.mp4`;
+    // const filePath = `./mp4downloads/${newNameHere}.mp4`;
 
     // set headers for file download
-    res.setHeader("Content-Type", "application/octet-stream");
-   
-    // await res.download(`./mp4downloads/${newNameHere}.mp4`);
+    // res.setHeader("Content-Type", "application/octet-stream");
+
+    await res.download(`./mp4downloads/${newNameHere}.mp4`);
 
     // create a readable stream from the file
-    const fileStream = fs.createReadStream(filePath);
+    // const fileStream = fs.createReadStream(filePath);
 
     // pipe the stream to the res obj
-    fileStream.pipe(res);
+    // fileStream.pipe(res);
   } catch (err) {
     console.log(err);
   }
 };
-const post_terminateStream = (req, res) => {
-  if (isdownloading) {
-    isdownloading = false;
-    console.log(isdownloading);
-  }
+// const post_terminateStream = (req, res) => {
+//   if (isdownloading) {
+//     isdownloading = false;
+//     console.log(isdownloading);
+//   }
 
-  console.log("download stopped");
-};
+//   console.log("download stopped");
+// };
 
 // itag 243, 396, 134
 
@@ -265,5 +268,5 @@ module.exports = {
   get_DownloadMp3,
   post_SaveAsVideo,
   get_DownloadToMp4,
-  post_terminateStream,
+  // post_terminateStream,
 };
