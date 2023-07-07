@@ -162,7 +162,7 @@ const post_SaveAsVideo = async (req, res) => {
       //   }
       // }
 
-      percentage = p.percentage;
+      percentage = p;
       
       console.log("percent value", percentage);
       updateStream.push(JSON.stringify({ percentage: p }) + "\n");
