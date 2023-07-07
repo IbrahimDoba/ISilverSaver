@@ -66,7 +66,7 @@ const Homepage = () => {
         setIsLoading(false);
         return;
       }
-      await axios.post("http://localhost:4000/geturldetail", {
+      await axios.post("https://i-silver-saver-git-master-ibrahimdoba.vercel.app/geturldetail", {
         url: videoUrl,
       });
 
@@ -82,7 +82,7 @@ const Homepage = () => {
   };
   // get video info
   const fetchVideoInfo = async () => {
-    const res = await axios.get("http://localhost:4000/geturldetail");
+    const res = await axios.get("https://i-silver-saver-git-master-ibrahimdoba.vercel.app/geturldetail");
     try {
       setVideoInfo([res.data]);
       console.log("videoinfo", videoInfo);
