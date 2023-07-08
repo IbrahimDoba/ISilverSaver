@@ -120,7 +120,7 @@ const Homepage = () => {
   // clear search input and saved input
   const clearSearch = async (e) => {
     e.preventDefault();
-    const res = await axios.get("http://localhost:4000/clearUrl", {
+    const res = await axios.get("https://i-silver-saver-git-master-ibrahimdoba.vercel.app/clearUrl", {
       params: {
         url: "",
       },
@@ -144,7 +144,7 @@ const Homepage = () => {
     setShowModal(true);
     setModalMessage("Download Getting Ready Please Wait.....");
 
-    fetch("http://localhost:4000/convertToMp3", {
+    fetch("https://i-silver-saver-git-master-ibrahimdoba.vercel.app/convertToMp3", {
       method: "POST",
       body: JSON.stringify({ url: videoUrl, title: videoTitle }),
       headers: {
@@ -190,7 +190,7 @@ const Homepage = () => {
 
   const DownloadToMp3 = () => {
     axios
-      .get("http://localhost:4000/downloadToMp3", { responseType: "blob" })
+      .get("https://i-silver-saver-git-master-ibrahimdoba.vercel.app/downloadToMp3", { responseType: "blob" })
       .then((res) => {
         FileDownload(res.data, `${videoTitle}.mp3`);
         setVideoToMp3(false);
@@ -214,7 +214,7 @@ const Homepage = () => {
     setShowModal(true);
     setModalMessage("Download Getting Ready Please Wait.....");
 
-    fetch("http://localhost:4000/downloadToMp4", {
+    fetch("https://i-silver-saver-git-master-ibrahimdoba.vercel.app/downloadToMp4", {
       method: "POST",
       body: JSON.stringify({
         url: videoUrl,
@@ -274,7 +274,7 @@ const Homepage = () => {
 
   const DownloadToMp4 = (qualityLabel, combinedname) =>
     axios
-      .get("http://localhost:4000/downloadToVideo", {
+      .get("https://i-silver-saver-git-master-ibrahimdoba.vercel.app/downloadToVideo", {
         responseType: "blob",
         params: {
           titlename: combinedname,
