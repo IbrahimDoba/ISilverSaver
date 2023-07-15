@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const apiController = require("./apiControllers.js");
 
-
+router.get("/", apiController.GetDefault)
 // get video details from url
 router.post("/geturldetail", apiController.Post_getDetail);
 // send get req with video details

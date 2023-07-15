@@ -21,7 +21,9 @@ let newname = null;
 let updateStream;
 let isdownloading = true;
 console.log(isdownloading);
-
+const GetDefault = (req, res) => {
+  res.send("Server HomePage");
+};
 // get video details from url
 const Post_getDetail = async (req, res) => {
   const url = req.body.url;
@@ -163,7 +165,7 @@ const post_SaveAsVideo = async (req, res) => {
       // }
 
       percentage = p;
-      
+
       console.log("percent value", percentage);
       updateStream.push(JSON.stringify({ percentage: p }) + "\n");
     };
@@ -216,7 +218,7 @@ const post_SaveAsVideo = async (req, res) => {
         newNameHere = combinedname;
         console.log(MainTag);
         console.log("naehereis", newNameHere);
-        console.log(MainTag)
+        console.log(MainTag);
       });
     } catch (err) {
       console.log(err);
@@ -268,5 +270,6 @@ module.exports = {
   get_DownloadMp3,
   post_SaveAsVideo,
   get_DownloadToMp4,
+  GetDefault,
   // post_terminateStream,
 };
