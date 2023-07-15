@@ -157,7 +157,7 @@ const Homepage = () => {
 
         function read() {
           reader.read().then(({ done, value }) => {
-            if (done) {
+            if (received === 100) {
               // Perform any necessary tasks after the conversion is complete
               setVideoToMp3(false);
               setShowModal(true);
@@ -237,7 +237,7 @@ const Homepage = () => {
             //   console.log("terminated");
             //   return;
             // }
-            if (done) {
+            if (received === 100) {
               // perfrom task after conversion is completed
               setVideoToMp3(false);
               setShowModal(true);
