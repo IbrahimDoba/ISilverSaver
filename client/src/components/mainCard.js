@@ -23,7 +23,7 @@ const MainCard = () => {
           <img
             className="h-56 w-full object-cover sm:h-72 md:h-96 lg:h-full lg:w-full"
             src={main1}
-            alt="img here"
+            alt="YouTube video and audio downloader"
           />
         </article>
         <article className=" flex w-1/2 flex-col  p-4 max-med:h-auto   max-med:w-auto ">
@@ -42,9 +42,9 @@ const MainCard = () => {
         </article>
       </section>
       <section className="w-[80%] ">
-        <h2 className="py-10 text-center text-4xl ">
+        <h1 className="py-10 text-center text-[#000] text-4xl ">
           HOW TO DOWNLOAD VIDEOS FROM{" "}
-        </h2>
+        </h1>
         <div className=" border-b-[6px] border-b-ACT "></div>
         <p className="p-4 text-center text-lg ">
           You must follow these easy steps to download Audio and Videos from
@@ -56,7 +56,7 @@ const MainCard = () => {
               <img
                 className="  h-[280px] w-full  rounded-t-lg object-contain"
                 src={img1}
-                alt="imghere"
+                alt="YouTube video and audio downloader"
               />
             </article>
             <section className="w-[80%]  flex-1  ">
@@ -74,7 +74,7 @@ const MainCard = () => {
               <img
                 className="  h-[280px] w-full   rounded-t-lg object-contain"
                 src={img2}
-                alt="imghere"
+                alt="YouTube video and audio downloader"
               />
             </article>
             <section className="w-[80%]  flex-1  ">
@@ -92,7 +92,7 @@ const MainCard = () => {
               <img
                 className="  h-[280px] w-full  rounded-t-lg object-contain"
                 src={img3}
-                alt="imghere"
+                alt="YouTube video and audio downloader"
               />
             </article>
             <section className="w-[80%]  flex-1  ">
@@ -118,7 +118,7 @@ const MainCard = () => {
             <AnimationOnScroll animateIn="animate__bounceIn">
               <img
                 src={audiimg}
-                alt="imghere"
+                alt="YouTube video and audio downloader"
                 className=" h-[300px] w-auto rounded-t-lg max-med:h-[250px]"
               />
             </AnimationOnScroll>
@@ -144,7 +144,7 @@ const MainCard = () => {
             <AnimationOnScroll animateIn="animate__bounceIn">
               <img
                 src={video}
-                alt="imghere"
+                alt="YouTube video and audio downloader"
                 className=" h-[300px] w-auto rounded-t-lg max-med:h-[250px]"
               />
             </AnimationOnScroll>
@@ -171,7 +171,7 @@ const MainCard = () => {
             <AnimationOnScroll animateIn="animate__bounceIn">
               <img
                 src={fast}
-                alt="imghere"
+                alt="YouTube video and audio downloader"
                 className=" h-[300px] w-auto rounded-t-lg max-med:h-[250px]"
               />
             </AnimationOnScroll>

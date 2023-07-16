@@ -26,7 +26,7 @@ if (!fs.existsSync(mp3DownloadsFolderPath)) {
 app.use(express.json());
 // Enable CORS with specific origin and methods
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://ssaver.netlify.app/");
+  res.setHeader("Access-Control-Allow-Origin", "https://www.ssaver.co/");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   next();

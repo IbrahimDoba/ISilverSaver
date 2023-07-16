@@ -66,7 +66,7 @@ const Homepage = () => {
         setIsLoading(false);
         return;
       }
-      await axios.post("https://isilversaver.up.railway.app/geturldetail", {
+      await axios.post("https://isilversaver.up.railway.app/youtube-video-details", {
         url: videoUrl,
       });
 
@@ -82,7 +82,7 @@ const Homepage = () => {
   };
   // get video info
   const fetchVideoInfo = async () => {
-    const res = await axios.get("https://isilversaver.up.railway.app/geturldetail");
+    const res = await axios.get("https://isilversaver.up.railway.app/youtube-video-details");
     try {
       setVideoInfo([res.data]);
       console.log("videoinfo", videoInfo);
@@ -120,7 +120,7 @@ const Homepage = () => {
   // clear search input and saved input
   const clearSearch = async (e) => {
     e.preventDefault();
-    const res = await axios.get("https://isilversaver.up.railway.app/clearUrl", {
+    const res = await axios.get("https://isilversaver.up.railway.app/clear-url", {
       params: {
         url: "",
       },
@@ -144,7 +144,7 @@ const Homepage = () => {
     setShowModal(true);
     setModalMessage("Download Getting Ready Please Wait.....");
 
-    fetch("https://isilversaver.up.railway.app/convertToMp3", {
+    fetch("https://isilversaver.up.railway.app/youtube-audio-converter", {
       method: "POST",
       body: JSON.stringify({ url: videoUrl, title: videoTitle }),
       headers: {
@@ -190,7 +190,7 @@ const Homepage = () => {
 
   const DownloadToMp3 = () => {
     axios
-      .get("https://isilversaver.up.railway.app/downloadToMp3", { responseType: "blob" })
+      .get("https://isilversaver.up.railway.app/youtube-audio-downloader", { responseType: "blob" })
       .then((res) => {
         FileDownload(res.data, `${videoTitle}.mp3`);
         setVideoToMp3(false);
@@ -214,7 +214,7 @@ const Homepage = () => {
     setShowModal(true);
     setModalMessage("Download Getting Ready Please Wait.....");
 
-    fetch("https://isilversaver.up.railway.app/downloadToMp4", {
+    fetch("https://isilversaver.up.railway.app/youtube-video-converter", {
       method: "POST",
       body: JSON.stringify({
         url: videoUrl,
@@ -274,7 +274,7 @@ const Homepage = () => {
 
   const DownloadToMp4 = (qualityLabel, combinedname) =>
     axios
-      .get("https://isilversaver.up.railway.app/downloadToVideo", {
+      .get("https://isilversaver.up.railway.app/youtube-video-downloader", {
         responseType: "blob",
         params: {
           titlename: combinedname,
@@ -295,7 +295,7 @@ const Homepage = () => {
 
         // clean up the url obj
         // window.URL.revokeObjectURL(url);
-
+        console.log("download loading")
         FileDownload(res.data, `${combinedname}.mp4`);
         setVideoToMp3(true);
         setShowModal(true);
@@ -313,6 +313,7 @@ const Homepage = () => {
 
   return (
     <div className="flex flex-col items-center  bg-[#ffffff]">
+      <h1 class="max-med:text-2xl text-4xl font-bold text-[#000] my-8 mx-3 text-center ">Free Youtube Video and Audio Downloder</h1>
       <form
         onSubmit={handleSubmit}
         className=" mx-auto my-6  lg:min-w-[600px] max-md:w-[80%]"
@@ -378,7 +379,7 @@ const Homepage = () => {
                   src={video.thumbnails[4].url || video.thumbnails[3].url}
                   alt="thumbnail"
                 />
-                <h2 className="mt-4 text-2xl font-semibold max-md:text-sm">
+                <h2 className="mt-4 mx-4 text-2xl font-semibold max-md:text-sm">
                   {video.title}
                 </h2>
               </div>
@@ -394,7 +395,7 @@ const Homepage = () => {
         <button
           // disabled={videoToMp3}
           onClick={convertToMp3}
-          className="focus:shadow-outline max-h-[40px] rounded bg-[#93dc99] px-4 py-2 font-bold text-TXT hover:bg-ACT max-md:max-h-[60px] max-md:w-[150px] max-md:px-2
+          className="focus:shadow-outline max-h-[40px] rounded bg-[#93dc99] px-4 py-2 font-bold text-TXT hover:bg-ACT max-md:max-h-[40px] max-md:w-[150px] max-md:px-2
           max-md:text-sm "
         >
           Download Audio

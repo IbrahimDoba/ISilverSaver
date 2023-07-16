@@ -3,19 +3,19 @@ const apiController = require("./apiControllers.js");
 
 router.get("/", apiController.GetDefault)
 // get video details from url
-router.post("/geturldetail", apiController.Post_getDetail);
+router.post("/youtube-video-details", apiController.postVideoDetails);
 // send get req with video details
-router.get("/geturldetail", apiController.Get_getDetail);
+router.get("/youtube-video-details", apiController.getVideoDetails);
 // clear and reset video details
-router.get("/clearUrl", apiController.post_clearUrl);
+router.get("/clear-url", apiController.post_clearUrl);
 // download and save mp3 audio
-router.post("/convertToMp3", apiController.post_SaveAsAudio);
+router.post("/youtube-audio-converter", apiController.convertToAudio);
 // download to mp3
-router.get("/downloadToMp3", apiController.get_DownloadMp3)
+router.get("/youtube-audio-downloader", apiController.downloadAudio)
 // download and save 
-router.post("/downloadToMp4", apiController.post_SaveAsVideo);
+router.post("/youtube-video-converter", apiController.convertToVideo);
 // download to mp4
-router.get("/downloadToVideo", apiController.get_DownloadToMp4)
+router.get("/youtube-video-downloader", apiController.downloadVideo)
 // ternminate stream
 // router.post("/terminateStream", apiController.post_terminateStream )
 

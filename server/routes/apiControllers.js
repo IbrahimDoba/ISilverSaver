@@ -25,7 +25,7 @@ const GetDefault = (req, res) => {
   res.send("Server HomePage");
 };
 // get video details from url
-const Post_getDetail = async (req, res) => {
+const postVideoDetails = async (req, res) => {
   const url = req.body.url;
 
   try {
@@ -44,7 +44,7 @@ const Post_getDetail = async (req, res) => {
 };
 
 // send get req with video details
-const Get_getDetail = async (req, res) => {
+const getVideoDetails = async (req, res) => {
   try {
     if (videoInfo) {
       res.send(videoInfo);
@@ -69,7 +69,7 @@ const post_clearUrl = async (req, res) => {
 };
 
 // download and send mp3 video
-const post_SaveAsAudio = async (req, res) => {
+const convertToAudio = async (req, res) => {
   const url = req.body.url;
   const title = req.body.title;
 
@@ -134,7 +134,7 @@ const post_SaveAsAudio = async (req, res) => {
     });
 };
 
-const get_DownloadMp3 = async (req, res) => {
+const downloadAudio = async (req, res) => {
   try {
     console.log(mp3data);
     // await res.send(mp3data)
@@ -146,7 +146,7 @@ const get_DownloadMp3 = async (req, res) => {
 
 // download and save as Mp$
 
-const post_SaveAsVideo = async (req, res) => {
+const convertToVideo = async (req, res) => {
   try {
     const url = req.body.url;
     const title = req.body.title;
@@ -231,7 +231,7 @@ const post_SaveAsVideo = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
-const get_DownloadToMp4 = async (req, res) => {
+const downloadVideo = async (req, res) => {
   try {
     console.log("videoname", newNameHere);
 
@@ -263,13 +263,13 @@ const get_DownloadToMp4 = async (req, res) => {
 // itag 243, 396, 134
 
 module.exports = {
-  Post_getDetail,
-  Get_getDetail,
+  postVideoDetails,
+  getVideoDetails,
   post_clearUrl,
-  post_SaveAsAudio,
-  get_DownloadMp3,
-  post_SaveAsVideo,
-  get_DownloadToMp4,
+  convertToAudio,
+  downloadAudio,
+  convertToVideo,
+  downloadVideo,
   GetDefault,
   // post_terminateStream,
 };
