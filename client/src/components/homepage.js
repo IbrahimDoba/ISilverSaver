@@ -313,7 +313,7 @@ const Homepage = () => {
 
   return (
     <div className="flex flex-col items-center  bg-[#ffffff]">
-      <h1 class="max-med:text-2xl text-4xl font-bold text-[#000] my-8 mx-3 text-center ">Free Youtube Video and Audio Downloder</h1>
+      <h1 class="max-med:text-2xl text-4xl font-semibold text-[#434343] my-8 mx-3 text-center ">Free Youtube Video and Audio Downloder - Ssaver</h1>
       <form
         onSubmit={handleSubmit}
         className=" mx-auto my-6  lg:min-w-[600px] max-md:w-[80%]"
