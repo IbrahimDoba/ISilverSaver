@@ -12,8 +12,11 @@ const fs = require("fs");
 const path = require("path");
 const myRouter = require("./routes/routes.js");
 
+
 const mp4DownloadsFolderPath = path.join(__dirname, "mp4downloads");
 const mp3DownloadsFolderPath = path.join(__dirname, "mp3downloads");
+
+
 
 if (!fs.existsSync(mp4DownloadsFolderPath)) {
   fs.mkdirSync(mp4DownloadsFolderPath);
@@ -39,6 +42,7 @@ deleteVideosInFolder(folderPath);
 
 folderPathMp3 = "./mp3downloads";
 deleteAudiosInFolderMp3(folderPathMp3);
+
 
 PORT = process.env.PORT || 4000;
 URI =

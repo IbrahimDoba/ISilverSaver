@@ -10,6 +10,8 @@ const http = require("http").createServer(app);
 const path = require("path");
 const { Readable } = require("stream");
 const fs = require("fs");
+const { dlAudioVideo } = require("youtube-exec");
+const Youtube = require("youtube-stream-url");
 
 router.use(bodyParser.json());
 
@@ -35,7 +37,7 @@ const postVideoDetails = async (req, res) => {
       res.status(200).json({ message: "video datas" });
       const newname = videoname.replace(/[\/\\:*?"'|]/g, "-"); // sanitize funtion
 
-      console.log(newname);
+      console.log(url);
     });
   } catch (err) {
     res.status(400).json({ error: "not avaiable" });
@@ -231,6 +233,22 @@ const convertToVideo = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
+const testVideoDownload = async (req, res) => {
+  const url = req.body.url;
+
+  try {
+    Youtube.getInfo({
+      url: url,
+    }).then((video) => {
+      res.json(video)
+      console.log(video);
+    });
+  } catch (err) {
+    console.error("An error occurred:", err.message);
+  }
+};
+
 const downloadVideo = async (req, res) => {
   try {
     console.log("videoname", newNameHere);
@@ -271,5 +289,6 @@ module.exports = {
   convertToVideo,
   downloadVideo,
   GetDefault,
+  testVideoDownload,
   // post_terminateStream,
 };

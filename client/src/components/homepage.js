@@ -1,19 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import FileDownload from "js-file-download";
+// import FileDownload from "js-file-download";
 import { AiOutlineDown } from "react-icons/ai";
+import { useRef } from "react";
 
 const Homepage = () => {
   const [videoUrl, setVideoUrl] = useState("");
   const [videoInfo, setVideoInfo] = useState([]);
-  const [videoTitle, setVideoTitle] = useState("");
-  const [videoToMp3, setVideoToMp3] = useState(false);
+  // const [videoTitle, setVideoTitle] = useState("");
+  // const [videoToMp3, setVideoToMp3] = useState(false);
   const [isloading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [showDrop, setShowDrop] = useState(false);
-  const [matchedData, setMatchedData] = useState([]);
+  // const [matchedData, setMatchedData] = useState([]);
+  const [testData, setTestData] = useState([]);
+  const [getTestData, setGetTestData] = useState([]);
+  const [clickGetUrl, setClickGetUrl] = useState(null);
+  const [newTitle, setNewTitle] = useState("");
+  const [donwloadMp3, setDownloadMp3] = useState();
   // const [endStream, setEndSteam] = useState(false);
+  const linkRef = useRef();
+  const audioRef = useRef()
+
 
   // remove string after underscore
   const removeString = () => {
@@ -66,11 +75,11 @@ const Homepage = () => {
         setIsLoading(false);
         return;
       }
-      await axios.post("https://isilversaver.up.railway.app/youtube-video-details", {
+      await axios.post("http://localhost:4000/youtube-video-details", {
         url: videoUrl,
       });
 
-      await fetchVideoInfo();
+      await testDownload();
       setIsLoading(false);
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -80,16 +89,21 @@ const Homepage = () => {
       }
     }
   };
-  // get video info
-  const fetchVideoInfo = async () => {
-    const res = await axios.get("https://isilversaver.up.railway.app/youtube-video-details");
-    try {
-      setVideoInfo([res.data]);
-      console.log("videoinfo", videoInfo);
-      setVideoTitle(res.data.title);
+  const testDownload = async () => {
+    const res = await axios.post("http://localhost:4000/test-download", {
+      url: videoUrl,
+    });
 
-      const QLtoMatch = [
-        "2160p60",
+    try {
+      setVideoInfo([res.data.videoDetails]);
+      console.log("videoinfo", videoInfo);
+
+      setTestData(res.data.formats);
+      setNewTitle(res.data.videoDetails.title);
+      console.log(testData);
+      console.log("alldatas", res);
+
+      const testQLtoMatch = [
         "1440p60",
         "1080p60",
         "1080p",
@@ -98,222 +112,290 @@ const Homepage = () => {
         "360p",
         "240p",
       ];
-
-      const allMatchedData = res.data.formatsVideo.filter((data) =>
-        QLtoMatch.includes(data.qualityLabel)
+      const AudioData = res.data.formats.filter(
+        (data) =>
+          data.mimeType.includes("audio/mp4") &&
+          data.audioQuality.includes("AUDIO_QUALITY_MEDIUM")
       );
-      console.log("QL", allMatchedData);
-      setMatchedData(allMatchedData);
-    } catch (error) {
       
-      console.log("err", error);
+      setDownloadMp3([AudioData[0].url])
+
+      
+      console.log("auidoos here", AudioData);
+
+      const allMatchData = res.data.formats.filter(
+        (data) =>
+          testQLtoMatch.includes(data.qualityLabel) &&
+          data.mimeType.includes("mp4a.40.2")
+      );
+      console.log("vide with audio", allMatchData);
+      setGetTestData(allMatchData);
+    } catch (err) {
+      console.log(err);
     }
   };
-  const handleDropItemClick = (qualityLabel) => {
-    const GetItag = matchedData
-      .filter((data) => data.qualityLabel === qualityLabel)
-      .map((data) => data.itag);
 
-    convertToMp4(GetItag, qualityLabel);
-    console.log(`Clicked ${qualityLabel}`, GetItag);
+  const testDownloadMp3 = async () => {
+    
+    try {
+      if (audioRef.current) {
+        audioRef.current.click();
+        console.log(audioRef, "Audio link cliccked");
+      }
+      console.log("u0rlaudi here",donwloadMp3)    
+    } catch (err) {}
   };
+  // get video info
+  // const fetchVideoInfo = async () => {
+  //   const res = await axios.get("http://localhost:4000/youtube-video-details");
+  //   try {
+      
+      // setVideoTitle(res.data.title);
+     
+
+      // const QLtoMatch = [
+      //   "2160p60",
+      //   "1440p60",
+      //   "1080p60",
+      //   "1080p",
+      //   "720p",
+      //   "480p",
+      //   "360p",
+      // ];
+
+      // const allMatchedData = res.data.formatsVideo.filter((data) =>
+      //   QLtoMatch.includes(data.qualityLabel)
+      // );
+      // console.log("QL", allMatchedData);
+      // setMatchedData(allMatchedData);
+  //   } catch (error) {
+  //     console.log("err", error);
+  //   }
+  // };
+  const handleDropItemClick = (qualityLabel) => {
+    let getUrl = getTestData
+      .filter((data) => data.qualityLabel === qualityLabel)
+      .map((data) => data.url);
+
+    console.log(`Clickurldata ${qualityLabel}`, clickGetUrl);
+
+    setClickGetUrl((prevClick) => getUrl[0]);
+
+
+    console.log(`Clicked ${qualityLabel}`, getUrl);
+  };
+  useEffect(() => {
+    console.log("updatedCLick", clickGetUrl);
+
+    if (clickGetUrl) {
+      console.log("sameclick as geturl");
+      if (linkRef.current) {
+        linkRef.current.click();
+        console.log(linkRef, "link cliccked");
+      }
+    }
+  }, [clickGetUrl]);
+
+  // const GetItag = matchedData
+  //   .filter((data) => data.qualityLabel === qualityLabel)
+  //   .map((data) => data.itag);
+
+  // convertToMp4(GetItag, qualityLabel);
   // clear search input and saved input
   const clearSearch = async (e) => {
     e.preventDefault();
-    const res = await axios.get("https://isilversaver.up.railway.app/clear-url", {
+    const res = await axios.get("http://localhost:4000/clear-url", {
       params: {
         url: "",
       },
     });
+
     console.log("cleardata", res.data);
+    setClickGetUrl("");
+    setGetTestData([]);
     setVideoInfo([]);
     setVideoUrl("");
     setIsLoading(false);
   };
 
   // donwload  audio funtions
-  const convertToMp3 = async (e) => {
-    e.preventDefault();
-    if (!videoUrl || videoUrl.trim() === "") {
-      setShowModal(true);
-      setModalMessage("YouTube Link Is Missing!");
-      return;
-    }
-    console.log(videoToMp3);
-    setVideoToMp3(true);
-    setShowModal(true);
-    setModalMessage("Download Getting Ready Please Wait.....");
-
-    fetch("https://isilversaver.up.railway.app/youtube-audio-converter", {
-      method: "POST",
-      body: JSON.stringify({ url: videoUrl, title: videoTitle }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        const reader = response.body.getReader();
-        let received = "";
-
-        function read() {
-          reader.read().then(({ done, value }) => {
-            if (received === 100) {
-              // Perform any necessary tasks after the conversion is complete
-              setVideoToMp3(false);
-              setShowModal(true);
-              setModalMessage("Download Complete: " + received + "%");
-              DownloadToMp3();
-              return;
-            }
-
-            // Process the received data
-            const chunk = new TextDecoder("utf-8").decode(value);
-
-            received = Math.round(parseFloat(chunk));
-            console.log("Received:", received);
-            setModalMessage("Download Percentage: " + received + "%");
-
-            // Continue reading the stream
-            read();
-          });
-        }
-
-        read();
-      })
-      .catch((err) => {
-        console.error("Error occurred during POST", err);
-        setShowModal(true);
-        setModalMessage("An error occurred while converting this video!!");
-        setVideoToMp3(false);
-      });
-  };
-
-  const DownloadToMp3 = () => {
-    axios
-      .get("https://isilversaver.up.railway.app/youtube-audio-downloader", { responseType: "blob" })
-      .then((res) => {
-        FileDownload(res.data, `${videoTitle}.mp3`);
-        setVideoToMp3(false);
-
-        setShowModal(true);
-        setModalMessage("Download Successful");
-        if (showModal === true) {
-          setShowModal(false);
-        }
-      });
-  };
-
-  const convertToMp4 = async (itag, qualityLabel) => {
-    // e.preventDefault();
-    if (!videoUrl || videoUrl.trim() === "") {
-      setShowModal(true);
-      setModalMessage("YouTube Link Is Missing!");
-      return;
-    }
-    setVideoToMp3(true);
-    setShowModal(true);
-    setModalMessage("Download Getting Ready Please Wait.....");
-
-    fetch("https://isilversaver.up.railway.app/youtube-video-converter", {
-      method: "POST",
-      body: JSON.stringify({
-        url: videoUrl,
-        title: videoTitle,
-        itag: itag,
-        qualityLabel: qualityLabel,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        const reader = res.body.getReader();
-        let received = "";
-
-        function read() {
-          reader.read().then(({ done, value }) => {
-            // if (done && received !== 100) {
-            //   setModalMessage("Download Canceled ");
-            //   console.log("terminated");
-            //   return;
-            // }
-            if (received === 100) {
-              // perfrom task after conversion is completed
-              setVideoToMp3(false);
-              setShowModal(true);
-              setModalMessage("Download Complete: " + received + "%");
-              DownloadToMp4(qualityLabel);
-              console.log("done value", done);
-              return;
-            }
-
-            // process the recieved datas
-            const decoder = new TextDecoder("utf-8");
-            const chunk = decoder.decode(value);
-            const parsedChunk = JSON.parse(chunk);
-            const percentageValue = parsedChunk.percentage.percentage;
-            received = Math.round(parseFloat(percentageValue));
-
-            console.log("Recived: ", received);
-            setModalMessage("Download Percentage: " + received + "%");
-            // setEndSteam(true);
-
-            // continue reading the stream
-            read();
-          });
-        }
-        read();
-      })
-      .catch((err) => {
-        console.error("Error occurred during POST", err);
-        setShowModal(true);
-        setModalMessage("An error occured while converting this video!!");
-        setVideoToMp3(false);
-      });
-  };
-
-  const DownloadToMp4 = (qualityLabel, combinedname) =>
-    axios
-      .get("https://isilversaver.up.railway.app/youtube-video-downloader", {
-        responseType: "blob",
-        params: {
-          titlename: combinedname,
-        },
-      })
-      .then((res) => {
-        const combinedname = videoTitle + qualityLabel;
-        // const blob = new Blob([res.data], { type: "video/mp4" });
-
-        //  create a url object from the blob
-        // const url = window.URL.createObjectURL(blob);
-
-        // create a temp anchor tag to initiate the download
-        // const a = document.createElement("a");
-        // a.href = url;
-        // a.download = combinedname + ".mp4";
-        // a.click();
-
-        // clean up the url obj
-        // window.URL.revokeObjectURL(url);
-        console.log("download loading")
-        FileDownload(res.data, `${combinedname}.mp4`);
-        setVideoToMp3(true);
-        setShowModal(true);
-        setModalMessage("Download successful");
-      });
-
-  // const termiateStream = async () => {
-  //   axios.post("http://localhost:4000/terminateStream");
-  //   try {
-  //     console.log("Steam Terminated sucess");
-  //   } catch (err) {
-  //     console.log("error transimiing steam", err);
+  // const convertToMp3 = async (e) => {
+  //   e.preventDefault();
+  //   if (!videoUrl || videoUrl.trim() === "") {
+  //     setShowModal(true);
+  //     setModalMessage("YouTube Link Is Missing!");
+  //     return;
   //   }
+  //   console.log(videoToMp3);
+  //   setVideoToMp3(true);
+  //   setShowModal(true);
+  //   setModalMessage("Download Getting Ready Please Wait.....");
+
+  //   fetch("http://localhost:4000/youtube-audio-converter", {
+  //     method: "POST",
+  //     body: JSON.stringify({ url: videoUrl, title: videoTitle }),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   })
+  //     .then((response) => {
+  //       const reader = response.body.getReader();
+  //       let received = "";
+
+  //       function read() {
+  //         reader.read().then(({ done, value }) => {
+  //           if (received === 100) {
+  //             // Perform any necessary tasks after the conversion is complete
+  //             setVideoToMp3(false);
+  //             setShowModal(true);
+  //             setModalMessage("Download Complete: " + received + "%");
+  //             DownloadToMp3();
+  //             return;
+  //           }
+
+  //           // Process the received data
+  //           const chunk = new TextDecoder("utf-8").decode(value);
+
+  //           received = Math.round(parseFloat(chunk));
+  //           console.log("Received:", received);
+  //           setModalMessage("Download Percentage: " + received + "%");
+
+  //           // Continue reading the stream
+  //           read();
+  //         });
+  //       }
+
+  //       read();
+  //     })
+  //     .catch((err) => {
+  //       console.error("Error occurred during POST", err);
+  //       setShowModal(true);
+  //       setModalMessage("An error occurred while converting this video!!");
+  //       setVideoToMp3(false);
+  //     });
   // };
+
+  // const DownloadToMp3 = () => {
+  //   axios
+  //     .get("http://localhost:4000/youtube-audio-downloader", {
+  //       responseType: "blob",
+  //     })
+  //     .then((res) => {
+  //       FileDownload(res.data, `${videoTitle}.mp3`);
+  //       setVideoToMp3(false);
+
+  //       setShowModal(true);
+  //       setModalMessage("Download Successful");
+  //       if (showModal === true) {
+  //         setShowModal(false);
+  //       }
+  //     });
+  // };
+
+  // const convertToMp4 = async (itag, qualityLabel) => {
+  //   // e.preventDefault();
+  //   if (!videoUrl || videoUrl.trim() === "") {
+  //     setShowModal(true);
+  //     setModalMessage("YouTube Link Is Missing!");
+  //     return;
+  //   }
+  //   setVideoToMp3(true);
+  //   setShowModal(true);
+  //   setModalMessage("Download Getting Ready Please Wait.....");
+
+  //   fetch("http://localhost:4000/youtube-video-converter", {
+  //     method: "POST",
+  //     body: JSON.stringify({
+  //       url: videoUrl,
+  //       title: videoTitle,
+  //       itag: itag,
+  //       qualityLabel: qualityLabel,
+  //     }),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   })
+  //     .then((res) => {
+  //       const reader = res.body.getReader();
+  //       let received = "";
+
+  //       function read() {
+  //         reader.read().then(({ done, value }) => {
+  //           // if (done && received !== 100) {
+  //           //   setModalMessage("Download Canceled ");
+  //           //   console.log("terminated");
+  //           //   return;
+  //           // }
+  //           if (received === 100) {
+  //             // perfrom task after conversion is completed
+  //             setVideoToMp3(false);
+  //             setShowModal(true);
+  //             setModalMessage("Download Complete: " + received + "%");
+  //             DownloadToMp4(qualityLabel);
+  //             console.log("done value", done);
+  //             return;
+  //           }
+
+  //           // process the recieved datas
+  //           const decoder = new TextDecoder("utf-8");
+  //           const chunk = decoder.decode(value);
+  //           const parsedChunk = JSON.parse(chunk);
+  //           const percentageValue = parsedChunk.percentage.percentage;
+  //           received = Math.round(parseFloat(percentageValue));
+
+  //           console.log("Recived: ", received);
+  //           setModalMessage("Download Percentage: " + received + "%");
+  //           // setEndSteam(true);
+
+  //           // continue reading the stream
+  //           read();
+  //         });
+  //       }
+  //       read();
+  //     })
+  //     .catch((err) => {
+  //       console.error("Error occurred during POST", err);
+  //       setShowModal(true);
+  //       setModalMessage("An error occured while converting this video!!");
+  //       setVideoToMp3(false);
+  //     });
+  // };
+
+  // const DownloadToMp4 = (qualityLabel, combinedname) =>
+  //   axios
+  //     .get("http://localhost:4000/youtube-video-downloader", {
+  //       responseType: "blob",
+  //       params: {
+  //         titlename: combinedname,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       const combinedname = videoTitle + qualityLabel;
+  // const blob = new Blob([res.data], { type: "video/mp4" });
+
+  //  create a url object from the blob
+  // const url = window.URL.createObjectURL(blob);
+
+  // create a temp anchor tag to initiate the download
+  // const a = document.createElement("a");
+  // a.href = url;
+  // a.download = combinedname + ".mp4";
+  // a.click();
+
+  // clean up the url obj
+  // window.URL.revokeObjectURL(url);
+  //   console.log("download loading");
+  //   FileDownload(res.data, `${combinedname}.mp4`);
+  //   setVideoToMp3(true);
+  //   setShowModal(true);
+  //   setModalMessage("Download successful");
+  // });
 
   return (
     <div className="flex flex-col items-center  bg-[#ffffff]">
-      <h1 class="max-med:text-2xl text-4xl font-semibold text-[#434343] my-8 mx-3 text-center ">Free Youtube Video and Audio Downloder - Ssaver</h1>
+      <h1 class="mx-3 my-8 text-center text-4xl font-semibold text-[#434343] max-med:text-2xl ">
+        Free Youtube Video and Audio Downloder - Ssaver
+      </h1>
       <form
         onSubmit={handleSubmit}
         className=" mx-auto my-6  lg:min-w-[600px] max-md:w-[80%]"
@@ -376,10 +458,14 @@ const Homepage = () => {
               >
                 <img
                   className="w-[80%] object-contain  "
-                  src={video.thumbnails[4].url || video.thumbnails[3].url}
+                  src={
+                    video.thumbnail.thumbnails[4].url || 
+                    video.thumbnail.thumbnails[3].url || 
+                    video.thumbnail.thumbnails[2].url 
+                  }
                   alt="thumbnail"
                 />
-                <h2 className="mt-4 mx-4 text-2xl font-semibold max-md:text-sm">
+                <h2 className="mx-4 mt-4 text-2xl font-semibold max-md:text-sm">
                   {video.title}
                 </h2>
               </div>
@@ -394,11 +480,21 @@ const Homepage = () => {
       <div className="  mt-6 flex w-[450px] justify-between  max-md:w-full max-md:justify-around">
         <button
           // disabled={videoToMp3}
-          onClick={convertToMp3}
+          onClick={testDownloadMp3}
           className="focus:shadow-outline max-h-[40px] rounded bg-[#93dc99] px-4 py-2 font-bold text-TXT hover:bg-ACT max-md:max-h-[40px] max-md:w-[150px] max-md:px-2
           max-md:text-sm "
         >
-          Download Audio
+         <a
+                  href={donwloadMp3}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  ref={audioRef}
+                  download={newTitle + ".mp3"}
+                  disabled={true}
+                >
+                  {" "}
+                 Download Audio
+                </a>
         </button>
         <div className="flex flex-col items-end ">
           <button
@@ -414,107 +510,161 @@ const Homepage = () => {
             <div className={` mt-2 grid grid-cols-2 ${showModal ? "" : ""}  `}>
               <button
                 className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
-                  matchedData.filter((data) => data.qualityLabel === "240p")
+                  getTestData.filter((data) => data.qualityLabel === "240p")
                     .length === 0
                     ? "hidden "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("240p")}
                 disabled={
-                  matchedData.filter((data) => data.qualityLabel === "240p")
+                  getTestData.filter((data) => data.qualityLabel === "240p")
                     .length === 0 || showModal
                 }
               >
-                240p
+                <a
+                  href={clickGetUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  ref={linkRef}
+                  download={newTitle}
+                  disabled={true}
+                >
+                  {" "}
+                  240p
+                </a>
               </button>
               <button
                 className={`ml-3 mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
-                  matchedData.filter((data) => data.qualityLabel === "360p")
+                  getTestData.filter((data) => data.qualityLabel === "360p")
                     .length === 0
                     ? "hidden "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("360p")}
                 disabled={
-                  matchedData.filter((data) => data.qualityLabel === "360p")
+                  getTestData.filter((data) => data.qualityLabel === "360p")
                     .length === 0 || showModal
                 }
               >
-                360p
+                <a
+                  href={clickGetUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  ref={linkRef}
+                  download={newTitle}
+                  disabled={true}
+                >
+                  {" "}
+                  360p
+                </a>
               </button>
               <button
                 className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
-                  matchedData.filter((data) => data.qualityLabel === "480p")
+                  getTestData.filter((data) => data.qualityLabel === "480p")
                     .length === 0
                     ? "hidden "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("480p")}
                 disabled={
-                  matchedData.filter((data) => data.qualityLabel === "480p")
+                  getTestData.filter((data) => data.qualityLabel === "480p")
                     .length === 0 || showModal
                 }
               >
-                480p
+                <a
+                  href={clickGetUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  ref={linkRef}
+                  download={newTitle}
+                >
+                  {" "}
+                  480p
+                </a>
               </button>
               <button
                 className={`ml-3 mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
-                  matchedData.filter((data) => data.qualityLabel === "720p")
+                  getTestData.filter((data) => data.qualityLabel === "720p")
                     .length === 0
                     ? " hidden "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("720p")}
                 disabled={
-                  matchedData.filter((data) => data.qualityLabel === "720p")
+                  getTestData.filter((data) => data.qualityLabel === "720p")
                     .length === 0 || showModal
                 }
               >
-                720p
+                <a
+                  href={clickGetUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  ref={linkRef}
+                  download={newTitle}
+                >
+                  {" "}
+                  720p
+                </a>
               </button>
               <button
                 className={`mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
-                  matchedData.filter(
-                    (data) => data.qualityLabel === "1080p60" || "1080p"
-                  ).length === 0
+                  getTestData.filter((data) => data.qualityLabel === "1080p")
+                    .length === 0
                     ? "hidden "
                     : ""
                 }`}
-                onClick={() => handleDropItemClick("1080p60" || "1080p")}
+                onClick={() => handleDropItemClick("1080p")}
                 disabled={
-                  matchedData.filter(
-                    (data) => data.qualityLabel === "1080p60" || "1080p"
-                  ).length === 0 || showModal
+                  getTestData.filter((data) => data.qualityLabel === "1080p")
+                    .length === 0 || showModal
                 }
               >
-                1080p60
+                <a
+                  href={clickGetUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  ref={linkRef}
+                  download={newTitle}
+                >
+                  {" "}
+                  1080p
+                </a>
               </button>
 
               <button
                 className={`ml-3 mt-3 block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
-                  matchedData.filter((data) => data.qualityLabel === "1440p60")
+                  getTestData.filter((data) => data.qualityLabel === "1440p60")
                     .length === 0
                     ? "hidden "
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("1440p60")}
                 disabled={
-                  matchedData.filter((data) => data.qualityLabel === "1440p60")
+                  getTestData.filter((data) => data.qualityLabel === "1440p60")
                     .length === 0 || showModal
                 }
               >
-                1440p60
+                <a
+                  href={clickGetUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  ref={linkRef}
+                  download={newTitle}
+                >
+                  {" "}
+                  1440p
+                </a>
               </button>
               <button
                 className={`mt-3  block rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-200 ${
-                  matchedData.filter((data) => data.qualityLabel === "2160p60")
+                  getTestData.filter((data) => data.qualityLabel === "2160p60")
                     .length === 0
                     ? " hidden"
                     : ""
                 }`}
                 onClick={() => handleDropItemClick("2160p60")}
                 disabled={
-                  matchedData.filter((data) => data.qualityLabel === "2160p60")
+                  getTestData.filter((data) => data.qualityLabel === "2160p60")
                     .length === 0 || showModal
                 }
               >

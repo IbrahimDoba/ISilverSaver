@@ -18,6 +18,7 @@ router.post("/youtube-video-converter", apiController.convertToVideo);
 router.get("/youtube-video-downloader", apiController.downloadVideo)
 // ternminate stream
 // router.post("/terminateStream", apiController.post_terminateStream )
+router.post ("/test-download", apiController.testVideoDownload)
 
 
 module.exports = router;
