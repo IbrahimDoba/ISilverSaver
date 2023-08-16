@@ -75,7 +75,7 @@ const Homepage = () => {
         setIsLoading(false);
         return;
       }
-      await axios.post("http://localhost:4000/youtube-video-details", {
+      await axios.post("https://youtube-saver.onrender.com/youtube-video-details", {
         url: videoUrl,
       });
 
@@ -90,7 +90,7 @@ const Homepage = () => {
     }
   };
   const testDownload = async () => {
-    const res = await axios.post("http://localhost:4000/test-download", {
+    const res = await axios.post("https://youtube-saver.onrender.com/test-download", {
       url: videoUrl,
     });
 
@@ -204,7 +204,7 @@ const Homepage = () => {
   // clear search input and saved input
   const clearSearch = async (e) => {
     e.preventDefault();
-    const res = await axios.get("http://localhost:4000/clear-url", {
+    const res = await axios.get("https://youtube-saver.onrender.com/clear-url", {
       params: {
         url: "",
       },
